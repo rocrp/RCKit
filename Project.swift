@@ -54,6 +54,8 @@ let project = Project(
       resources: ["RCKitDemo/Resources/**"],
       dependencies: [
         .target(name: "RCKit"),
+        .package(product: "Dependencies"),
+        .package(product: "SQLiteData"),
         .xcframework(
           path: "Dependencies/NSLoggerSwift.xcframework",
           condition: .when([.ios])

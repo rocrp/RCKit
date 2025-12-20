@@ -56,6 +56,12 @@ struct ContentView: View {
       colorRows()
     case .system:
       systemRows()
+    case .dependencies:
+      DependenciesDemoView()
+    case .sqliteData:
+      SQLiteDataDemoView()
+    case .mmkv:
+      MMKVDemoView()
     case .actions:
       actionRows()
     }
@@ -109,15 +115,8 @@ struct ContentView: View {
     xid = generateXID()
     randomHex = String.randomHex(size: 16)
     relativeTime = Date().addingTimeInterval(-3_600).relativeShortString()
-    utcNow = utcISO8601String(from: Date())
+    utcNow = UTCDateFormatter.iso8601String(from: Date())
     memory = loadMemory()
-  }
-
-  private func utcISO8601String(from date: Date) -> String {
-    let formatter = ISO8601DateFormatter()
-    formatter.timeZone = TimeZone(secondsFromGMT: 0)
-    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-    return formatter.string(from: date)
   }
 
   private func generateXID() -> String {
@@ -142,6 +141,9 @@ private enum DemoSection: String, CaseIterable, Identifiable {
   case time
   case color
   case system
+  case dependencies
+  case sqliteData
+  case mmkv
   case actions
 
   var id: String { rawValue }
@@ -152,24 +154,10 @@ private enum DemoSection: String, CaseIterable, Identifiable {
     case .time: return "Time"
     case .color: return "Color"
     case .system: return "System"
+    case .dependencies: return "Dependencies"
+    case .sqliteData: return "SQLiteData"
+    case .mmkv: return "MMKV"
     case .actions: return "Actions"
     }
-  }
-}
-
-private struct ValueRow: View {
-  let title: String
-  let value: String
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      Text(title)
-        .font(.caption)
-        .foregroundStyle(.secondary)
-      Text(value)
-        .font(.system(.body, design: .monospaced))
-        .foregroundStyle(.primary)
-    }
-    .padding(.vertical, 2)
   }
 }
