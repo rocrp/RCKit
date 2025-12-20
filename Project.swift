@@ -7,6 +7,7 @@ let settings = Settings.settings(
 )
 
 let macOSDeploymentTarget = "13.0"
+let iOSDeploymentTarget = "16.0"
 
 let project = Project(
   name: "RCKit",
@@ -18,7 +19,7 @@ let project = Project(
       destinations: [.iPhone, .iPad, .mac],
       product: .framework,
       bundleId: "dev.rocry.RCKit",
-      deploymentTargets: .multiplatform(macOS: macOSDeploymentTarget),
+      deploymentTargets: .multiplatform(iOS: iOSDeploymentTarget, macOS: macOSDeploymentTarget),
       infoPlist: .default,
       sources: ["RCKit/Sources/**"],
       dependencies: [
@@ -33,6 +34,7 @@ let project = Project(
       destinations: .iOS,
       product: .app,
       bundleId: "dev.rocry.RCKitDemo",
+      deploymentTargets: .iOS(iOSDeploymentTarget),
       infoPlist: .extendingDefault(
         with: [
           "NSBonjourServices": [
@@ -69,6 +71,7 @@ let project = Project(
       destinations: .iOS,
       product: .unitTests,
       bundleId: "dev.rocry.RCKitTests",
+      deploymentTargets: .iOS(iOSDeploymentTarget),
       infoPlist: .default,
       sources: ["RCKit/Tests/**"],
       dependencies: [.target(name: "RCKit")]

@@ -40,43 +40,65 @@ struct ContentView: View {
       .navigationSplitViewStyle(.balanced)
       .frame(minWidth: 720, minHeight: 520)
     #else
-      if #available(iOS 16.0, *) {
-        NavigationStack {
-          listView()
-            .navigationTitle("RCKit Demo")
-        }
-      } else {
-        NavigationView {
-          listView()
-            .navigationTitle("RCKit Demo")
-        }
-        .navigationViewStyle(.stack)
+      NavigationStack {
+        listView()
+          .navigationTitle("RCKit Demo")
       }
     #endif
   }
 
   private func listView() -> some View {
-    List {
-      Section(DemoSection.identifiers.title) {
-        identifiersRows()
-      }
+    #if os(iOS)
+      ZStack {
+        Color(.systemBackground)
+          .ignoresSafeArea()
+        List {
+          Section(DemoSection.identifiers.title) {
+            identifiersRows()
+          }
 
-      Section(DemoSection.time.title) {
-        timeRows()
-      }
+          Section(DemoSection.time.title) {
+            timeRows()
+          }
 
-      Section(DemoSection.color.title) {
-        colorRows()
-      }
+          Section(DemoSection.color.title) {
+            colorRows()
+          }
 
-      Section(DemoSection.system.title) {
-        systemRows()
-      }
+          Section(DemoSection.system.title) {
+            systemRows()
+          }
 
-      Section(DemoSection.actions.title) {
-        actionRows()
+          Section(DemoSection.actions.title) {
+            actionRows()
+          }
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
       }
-    }
+    #else
+      List {
+        Section(DemoSection.identifiers.title) {
+          identifiersRows()
+        }
+
+        Section(DemoSection.time.title) {
+          timeRows()
+        }
+
+        Section(DemoSection.color.title) {
+          colorRows()
+        }
+
+        Section(DemoSection.system.title) {
+          systemRows()
+        }
+
+        Section(DemoSection.actions.title) {
+          actionRows()
+        }
+      }
+    #endif
   }
 
   private func macDetailView(for section: DemoSection) -> some View {
