@@ -3,7 +3,6 @@ import SwiftUI
 
 struct ContentView: View {
   @State private var xid: String = ""
-  @State private var utcJSON: String = ""
   @State private var memory: String = ""
   @State private var randomHex: String = ""
   @State private var color: Color = .random()
@@ -25,8 +24,10 @@ struct ContentView: View {
       NavigationSplitView {
         List(DemoSection.allCases, selection: $selection) { section in
           Text(section.title)
+            .tag(section)
         }
         .navigationTitle("RCKit Demo")
+        .listStyle(.sidebar)
       } detail: {
         if let selection {
           macDetailView(for: selection)
@@ -39,9 +40,17 @@ struct ContentView: View {
       .navigationSplitViewStyle(.balanced)
       .frame(minWidth: 720, minHeight: 520)
     #else
-      NavigationView {
-        listView()
-          .navigationTitle("RCKit Demo")
+      if #available(iOS 16.0, *) {
+        NavigationStack {
+          listView()
+            .navigationTitle("RCKit Demo")
+        }
+      } else {
+        NavigationView {
+          listView()
+            .navigationTitle("RCKit Demo")
+        }
+        .navigationViewStyle(.stack)
       }
     #endif
   }
@@ -110,7 +119,6 @@ struct ContentView: View {
 
   @ViewBuilder
   private func timeRows() -> some View {
-    ValueRow(title: "UTC JSON", value: utcJSON)
     ValueRow(title: "Relative", value: relativeTime)
   }
 
@@ -150,7 +158,6 @@ struct ContentView: View {
     xid = generateXID()
     randomHex = String.randomHex(size: 16)
     relativeTime = Date().addingTimeInterval(-3_600).relativeShortString()
-    utcJSON = encodeUTCJSON()
     memory = loadMemory()
   }
 
@@ -162,36 +169,12 @@ struct ContentView: View {
     }
   }
 
-  private func encodeUTCJSON() -> String {
-    struct TimestampPayload: Codable {
-      let id: String
-      let createdAt: Date
-    }
-
-    let payload = TimestampPayload(id: xid, createdAt: Date())
-    do {
-      let data = try makeUTCJSONEncoder().encode(payload)
-      guard let string = String(data: data, encoding: .utf8) else {
-        preconditionFailure("Failed to decode UTF-8 JSON payload")
-      }
-      return string
-    } catch {
-      preconditionFailure("JSON encoding failed: \(error)")
-    }
-  }
-
   private func loadMemory() -> String {
     do {
       return try MemoryFootprint.getFormattedMemoryUsage()
     } catch {
       preconditionFailure("MemoryFootprint failed: \(error)")
     }
-  }
-
-  private func makeUTCJSONEncoder() -> JSONEncoder {
-    let encoder = JSONEncoder()
-    encoder.dateEncodingStrategy = .iso8601
-    return encoder
   }
 }
 

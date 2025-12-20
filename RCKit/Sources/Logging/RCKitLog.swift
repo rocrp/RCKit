@@ -159,7 +159,8 @@ public struct RCKitLog: @unchecked Sendable {
     case .none:
       return false
     case .keys(let keys):
-      return keys.contains(normalizeKey(key))
+      let normalized = normalizeKey(key)
+      return keys.contains { normalizeKey($0) == normalized }
     case .common:
       let normalized = normalizeKey(key)
       return RCKitLog.commonRedactionSubstrings.contains { normalized.contains($0) }
