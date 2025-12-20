@@ -26,14 +26,26 @@ extension Color {
 }
 
 extension View {
-  @MainActor @inlinable public func debugBorder<S>(
+  public func debugBorder<S>(
     _ content: S = Color.randomBorderColor,
-    width: CGFloat = 1.0 / Screen.scale
+    width: CGFloat? = nil
   ) -> some View where S: ShapeStyle {
+    modifier(DebugBorderModifier(style: content, width: width))
+  }
+}
+
+private struct DebugBorderModifier<S: ShapeStyle>: ViewModifier {
+  let style: S
+  let width: CGFloat?
+
+  @Environment(\.displayScale) private var displayScale
+
+  func body(content: Content) -> some View {
     #if DEBUG
-      border(content, width: width)
+      let lineWidth = width ?? (1.0 / displayScale)
+      content.border(style, width: lineWidth)
     #else
-      self
+      content
     #endif
   }
 }

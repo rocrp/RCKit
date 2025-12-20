@@ -427,38 +427,6 @@ struct TestUser: Codable, Equatable {
   let email: String
 }
 
-extension NetworkError: Equatable {
-  public static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
-    switch (lhs, rhs) {
-    case (.invalidURL(let lhsURL), .invalidURL(let rhsURL)):
-      return lhsURL == rhsURL
-    case (.invalidResponse, .invalidResponse):
-      return true
-    case (.requestFailed(let lhsError, let lhsURL), .requestFailed(let rhsError, let rhsURL)):
-      return lhsError.localizedDescription == rhsError.localizedDescription
-        && lhsURL?.absoluteString == rhsURL?.absoluteString
-    case (.badRequest(let lhsData, let lhsURL), .badRequest(let rhsData, let rhsURL)):
-      return lhsData == rhsData && lhsURL.absoluteString == rhsURL.absoluteString
-    case (.unauthorized(let lhsURL), .unauthorized(let rhsURL)),
-      (.forbidden(let lhsURL), .forbidden(let rhsURL)),
-      (.notFound(let lhsURL), .notFound(let rhsURL)):
-      return lhsURL.absoluteString == rhsURL.absoluteString
-    case (.serverError(let lhsCode, let lhsURL), .serverError(let rhsCode, let rhsURL)):
-      return lhsCode == rhsCode && lhsURL.absoluteString == rhsURL.absoluteString
-    case (
-      .httpError(let lhsCode, let lhsData, let lhsURL),
-      .httpError(let rhsCode, let rhsData, let rhsURL)
-    ):
-      return lhsCode == rhsCode && lhsData == rhsData
-        && lhsURL.absoluteString == rhsURL.absoluteString
-    case (.decodingFailed(let lhsError), .decodingFailed(let rhsError)):
-      return lhsError.localizedDescription == rhsError.localizedDescription
-    default:
-      return false
-    }
-  }
-}
-
 // MARK: - Mock URL Protocol
 
 class MockURLProtocol: URLProtocol {

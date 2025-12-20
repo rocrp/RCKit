@@ -20,15 +20,25 @@ import Foundation
 #endif
 
 public enum Screen {
-  @MainActor public static var scale: CGFloat {
-    #if os(iOS) || os(tvOS) || os(visionOS)
-      return UIScreen.main.scale
-    #elseif os(macOS)
-      return NSScreen.main?.backingScaleFactor ?? 1
-    #elseif os(watchOS)
-      return WKInterfaceDevice.current().screenScale
-    #else
+  #if os(iOS) || os(tvOS) || os(visionOS)
+    @MainActor public static func scale(for screen: UIScreen) -> CGFloat {
+      screen.scale
+    }
+
+    @MainActor public static func scale(for traitCollection: UITraitCollection) -> CGFloat {
+      traitCollection.displayScale
+    }
+  #elseif os(macOS)
+    @MainActor public static var scale: CGFloat {
+      NSScreen.main?.backingScaleFactor ?? 1
+    }
+  #elseif os(watchOS)
+    public static var scale: CGFloat {
+      WKInterfaceDevice.current().screenScale
+    }
+  #else
+    public static var scale: CGFloat {
       preconditionFailure("Screen.scale unsupported platform")
-    #endif
-  }
+    }
+  #endif
 }

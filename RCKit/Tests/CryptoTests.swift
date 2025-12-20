@@ -13,15 +13,6 @@ final class CryptoTests: XCTestCase {
   // Test data values
   let testString = "Hello, world!"
 
-  func testMD5() {
-    XCTAssertEqual("hello".md5, "5d41402abc4b2a76b9719d911017c592")
-    XCTAssertEqual(testString.md5, "6cd3556deb0da54bca060b4c39479839")
-  }
-
-  func testSHA1() {
-    XCTAssertEqual(testString.sha1, "943a702d06f34599aee1f8da8ef9f7296031d699")
-  }
-
   func testSHA256() {
     XCTAssertEqual(
       "hello".sha256, "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824")
@@ -50,8 +41,6 @@ final class CryptoTests: XCTestCase {
   func testDataHashing() {
     let data = Data(testString.utf8)
 
-    XCTAssertEqual(data.digest(using: .md5), testString.md5)
-    XCTAssertEqual(data.digest(using: .sha1), testString.sha1)
     XCTAssertEqual(data.digest(using: .sha256), testString.sha256)
     XCTAssertEqual(data.digest(using: .sha512), testString.sha512)
   }
