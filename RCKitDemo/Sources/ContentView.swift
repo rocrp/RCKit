@@ -7,20 +7,61 @@ struct ContentView: View {
   @State private var randomHex: String = ""
   @State private var color: Color = .random()
   @State private var relativeTime: String = ""
+  #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  #endif
 
   var body: some View {
+    rootView()
+      .task {
+        refresh()
+      }
+  }
+
+  @ViewBuilder
+  private func rootView() -> some View {
+    #if os(iOS)
+      if horizontalSizeClass == .compact {
+        NavigationStack {
+          sidebarList(compact: true)
+        }
+      } else {
+        splitView()
+      }
+    #else
+      splitView()
+    #endif
+  }
+
+  private func splitView() -> some View {
     NavigationSplitView {
-      sidebar()
+      sidebarList(compact: false)
     } detail: {
       Text("Select a section")
         .foregroundStyle(.secondary)
     }
-    .task {
-      refresh()
-    }
   }
 
-  private func sidebar() -> some View {
+  @ViewBuilder
+  private func sidebarList(compact: Bool) -> some View {
+    #if os(iOS)
+      if compact {
+        listContent()
+          .navigationTitle("RCKit Demo")
+          .listStyle(.plain)
+      } else {
+        listContent()
+          .navigationTitle("RCKit Demo")
+      }
+    #else
+      listContent()
+        .navigationTitle("RCKit Demo")
+        .navigationSplitViewColumnWidth(min: 180, ideal: 200)
+        .listStyle(.sidebar)
+    #endif
+  }
+
+  private func listContent() -> some View {
     List {
       ForEach(DemoSection.allCases) { section in
         NavigationLink {
@@ -30,11 +71,6 @@ struct ContentView: View {
         }
       }
     }
-    .navigationTitle("RCKit Demo")
-    #if os(macOS)
-      .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-      .listStyle(.sidebar)
-    #endif
   }
 
   private func detailView(for section: DemoSection) -> some View {
