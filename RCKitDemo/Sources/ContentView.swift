@@ -3,12 +3,13 @@ import SwiftUI
 
 struct ContentView: View {
   @State private var xid: String = ""
+  @State private var utcNow: String = ""
   @State private var memory: String = ""
   @State private var randomHex: String = ""
   @State private var color: Color = .random()
   @State private var relativeTime: String = ""
-  #if os(iOS)
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  #if os(macOS)
+    @State private var selection: DemoSection? = .identifiers
   #endif
 
   var body: some View {
@@ -20,66 +21,71 @@ struct ContentView: View {
 
   @ViewBuilder
   private func rootView() -> some View {
-    #if os(iOS)
-      if horizontalSizeClass == .compact {
-        NavigationStack {
-          sidebarList(compact: true)
-        }
-      } else {
-        splitView()
-      }
-    #else
-      splitView()
-    #endif
-  }
-
-  private func splitView() -> some View {
-    NavigationSplitView {
-      sidebarList(compact: false)
-    } detail: {
-      Text("Select a section")
-        .foregroundStyle(.secondary)
-    }
-  }
-
-  @ViewBuilder
-  private func sidebarList(compact: Bool) -> some View {
-    #if os(iOS)
-      if compact {
-        listContent()
-          .navigationTitle("RCKit Demo")
-          .listStyle(.plain)
-      } else {
-        listContent()
-          .navigationTitle("RCKit Demo")
-      }
-    #else
-      listContent()
-        .navigationTitle("RCKit Demo")
-        .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-        .listStyle(.sidebar)
-    #endif
-  }
-
-  private func listContent() -> some View {
-    List {
-      ForEach(DemoSection.allCases) { section in
-        NavigationLink {
-          detailView(for: section)
-        } label: {
+    #if os(macOS)
+      NavigationSplitView {
+        List(DemoSection.allCases, selection: $selection) { section in
           Text(section.title)
+            .tag(section)
         }
+        .navigationTitle("RCKit Demo")
+        .listStyle(.sidebar)
+      } detail: {
+        if let selection {
+          macDetailView(for: selection)
+            .navigationTitle(selection.title)
+        } else {
+          Text("Select a section")
+            .foregroundStyle(.secondary)
+        }
+      }
+      .navigationSplitViewStyle(.balanced)
+      .frame(minWidth: 720, minHeight: 520)
+    #else
+      NavigationStack {
+        listView()
+          .navigationTitle("RCKit Demo")
+      }
+    #endif
+  }
+
+  private func listView() -> some View {
+    List {
+      Section(DemoSection.identifiers.title) {
+        identifiersRows()
+      }
+
+      Section(DemoSection.time.title) {
+        timeRows()
+      }
+
+      Section(DemoSection.color.title) {
+        colorRows()
+      }
+
+      Section(DemoSection.system.title) {
+        systemRows()
+      }
+
+      Section(DemoSection.actions.title) {
+        actionRows()
       }
     }
   }
 
-  private func detailView(for section: DemoSection) -> some View {
+  private func macDetailView(for section: DemoSection) -> some View {
     ScrollView {
-      sectionContent(for: section)
+      VStack(alignment: .leading, spacing: 16) {
+        Text(section.title)
+          .font(.title2)
+          .fontWeight(.semibold)
+
+        VStack(alignment: .leading, spacing: 12) {
+          sectionContent(for: section)
+        }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(24)
+      }
+      .padding(24)
     }
-    .navigationTitle(section.title)
   }
 
   @ViewBuilder
@@ -98,51 +104,47 @@ struct ContentView: View {
     }
   }
 
+  @ViewBuilder
   private func identifiersRows() -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      ValueRow(title: "XID", value: xid)
-      ValueRow(title: "Random Hex", value: randomHex)
-    }
+    ValueRow(title: "XID", value: xid)
+    ValueRow(title: "Random Hex", value: randomHex)
   }
 
+  @ViewBuilder
   private func timeRows() -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      ValueRow(title: "Relative", value: relativeTime)
-    }
+    ValueRow(title: "UTC Now", value: utcNow)
+    ValueRow(title: "Relative", value: relativeTime)
   }
 
+  @ViewBuilder
   private func colorRows() -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      HStack(spacing: 12) {
-        RoundedRectangle(cornerRadius: 10)
-          .fill(color)
-          .frame(width: 44, height: 44)
-          .overlay(RoundedRectangle(cornerRadius: 10).stroke(.secondary.opacity(0.3)))
-        ValueRow(title: "Hex", value: color.hex())
-      }
-      Button("Randomize Color") {
-        color = .random()
-        RCKit.log.info("Randomized color", metadata: ["hex": color.hex()])
-      }
+    HStack(spacing: 12) {
+      RoundedRectangle(cornerRadius: 10)
+        .fill(color)
+        .frame(width: 44, height: 44)
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.secondary.opacity(0.3)))
+      ValueRow(title: "Hex", value: color.hex())
+    }
+    Button("Randomize Color") {
+      color = .random()
+      RCKit.log.info("Randomized color", metadata: ["hex": color.hex()])
     }
   }
 
+  @ViewBuilder
   private func systemRows() -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      ValueRow(title: "Memory", value: memory)
-      ValueRow(title: "Bundle", value: BuildConfig.Bundle.identifier)
-      ValueRow(title: "Channel", value: BuildConfig.channelName)
-    }
+    ValueRow(title: "Memory", value: memory)
+    ValueRow(title: "Bundle", value: BuildConfig.Bundle.identifier)
+    ValueRow(title: "Channel", value: BuildConfig.channelName)
   }
 
+  @ViewBuilder
   private func actionRows() -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Button("Refresh Demo Values") {
-        refresh()
-      }
-      Button("Log Debug Info") {
-        RCKit.log.printDebugInfo()
-      }
+    Button("Refresh Demo Values") {
+      refresh()
+    }
+    Button("Log Debug Info") {
+      RCKit.log.printDebugInfo()
     }
   }
 
@@ -150,7 +152,15 @@ struct ContentView: View {
     xid = generateXID()
     randomHex = String.randomHex(size: 16)
     relativeTime = Date().addingTimeInterval(-3_600).relativeShortString()
+    utcNow = utcISO8601String(from: Date())
     memory = loadMemory()
+  }
+
+  private func utcISO8601String(from date: Date) -> String {
+    let formatter = ISO8601DateFormatter()
+    formatter.timeZone = TimeZone(secondsFromGMT: 0)
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    return formatter.string(from: date)
   }
 
   private func generateXID() -> String {

@@ -7,7 +7,7 @@ let settings = Settings.settings(
 )
 
 let macOSDeploymentTarget = "13.0"
-let iOSDeploymentTarget = "16.0"
+let iOSDeploymentTarget = "18.0"
 
 let project = Project(
   name: "RCKit",
@@ -37,6 +37,11 @@ let project = Project(
       deploymentTargets: .multiplatform(iOS: iOSDeploymentTarget, macOS: macOSDeploymentTarget),
       infoPlist: .extendingDefault(
         with: [
+          // Keep an explicit launch screen to avoid legacy letterboxed UI on iPhone.
+          "UILaunchScreen": [
+            "UIColorName": "",
+            "UIImageName": "",
+          ],
           "NSBonjourServices": [
             "_nslogger._tcp",
             "_nslogger-ssl._tcp",
