@@ -11,5 +11,8 @@ import PackageDescription
 
 let package = Package(
   name: "RCKit",
-  dependencies: []
+  dependencies: [
+    .package(url: "https://github.com/pointfreeco/sqlite-data", from: "1.4.1"),
+    .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.10.0"),
+  ]
 )
