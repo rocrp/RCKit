@@ -7,114 +7,44 @@ struct ContentView: View {
   @State private var randomHex: String = ""
   @State private var color: Color = .random()
   @State private var relativeTime: String = ""
-  #if os(macOS)
-    @State private var selection: DemoSection? = .identifiers
-  #endif
 
   var body: some View {
-    rootView()
-      .task {
-        refresh()
-      }
-  }
-
-  @ViewBuilder
-  private func rootView() -> some View {
-    #if os(macOS)
-      NavigationSplitView {
-        List(DemoSection.allCases, selection: $selection) { section in
-          Text(section.title)
-            .tag(section)
-        }
-        .navigationTitle("RCKit Demo")
-        .listStyle(.sidebar)
-      } detail: {
-        if let selection {
-          macDetailView(for: selection)
-            .navigationTitle(selection.title)
-        } else {
-          Text("Select a section")
-            .foregroundStyle(.secondary)
-        }
-      }
-      .navigationSplitViewStyle(.balanced)
-      .frame(minWidth: 720, minHeight: 520)
-    #else
-      NavigationStack {
-        listView()
-          .navigationTitle("RCKit Demo")
-      }
-    #endif
-  }
-
-  private func listView() -> some View {
-    #if os(iOS)
-      ZStack {
-        Color(.systemBackground)
-          .ignoresSafeArea()
-        List {
-          Section(DemoSection.identifiers.title) {
-            identifiersRows()
-          }
-
-          Section(DemoSection.time.title) {
-            timeRows()
-          }
-
-          Section(DemoSection.color.title) {
-            colorRows()
-          }
-
-          Section(DemoSection.system.title) {
-            systemRows()
-          }
-
-          Section(DemoSection.actions.title) {
-            actionRows()
-          }
-        }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-      }
-    #else
-      List {
-        Section(DemoSection.identifiers.title) {
-          identifiersRows()
-        }
-
-        Section(DemoSection.time.title) {
-          timeRows()
-        }
-
-        Section(DemoSection.color.title) {
-          colorRows()
-        }
-
-        Section(DemoSection.system.title) {
-          systemRows()
-        }
-
-        Section(DemoSection.actions.title) {
-          actionRows()
-        }
-      }
-    #endif
-  }
-
-  private func macDetailView(for section: DemoSection) -> some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 16) {
-        Text(section.title)
-          .font(.title2)
-          .fontWeight(.semibold)
-
-        VStack(alignment: .leading, spacing: 12) {
-          sectionContent(for: section)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-      }
-      .padding(24)
+    NavigationSplitView {
+      sidebar()
+    } detail: {
+      Text("Select a section")
+        .foregroundStyle(.secondary)
     }
+    .task {
+      refresh()
+    }
+  }
+
+  private func sidebar() -> some View {
+    List {
+      ForEach(DemoSection.allCases) { section in
+        NavigationLink {
+          detailView(for: section)
+        } label: {
+          Text(section.title)
+        }
+      }
+    }
+    .navigationTitle("RCKit Demo")
+    #if os(macOS)
+      .navigationSplitViewColumnWidth(min: 180, ideal: 220)
+      .listStyle(.sidebar)
+    #endif
+  }
+
+  private func detailView(for section: DemoSection) -> some View {
+    List {
+      sectionContent(for: section)
+    }
+    .navigationTitle(section.title)
+    #if os(iOS)
+      .listStyle(.plain)
+    #endif
   }
 
   @ViewBuilder
@@ -235,8 +165,4 @@ private struct ValueRow: View {
     }
     .padding(.vertical, 2)
   }
-}
-
-#Preview {
-  ContentView()
 }
