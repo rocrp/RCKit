@@ -32,7 +32,7 @@ struct ContentView: View {
           }
           Button("Randomize Color") {
             color = .random()
-            RCKit.log.info("Randomized color", metadata: ["hex": .string(color.hex())])
+            RCKit.log.info("Randomized color", metadata: ["hex": color.hex()])
           }
         }
 

@@ -16,13 +16,17 @@ Dependency:
 ]
 ```
 
-Bootstrap once (App init):
+No bootstrap needed. Use `RCKit.log` directly.
 
-```swift
-RCKitLog.bootstrap()
+## Format
+Requires `swift-format` on PATH.
+
+```bash
+./Scripts/format.sh
+./Scripts/lint.sh
 ```
 
 ## Notes
 - JSONCoding: ISO8601 UTC, fractional seconds
-- Logging: apple/swift-log, UTC timestamp
+- Logging: OSLog + NSLogger (optional)
 - Fail-fast: invalid inputs preconditionFailure

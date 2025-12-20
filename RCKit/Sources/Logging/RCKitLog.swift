@@ -3,10 +3,46 @@
 //
 
 import Foundation
-import Logging
+import OSLog
 
-public enum RCKitLog {
-  public static let defaultMinimumLevel: Logger.Level = {
+private typealias SystemLogger = Logger
+
+protocol LogSink {
+  func send(
+    level: RCKitLog.Level,
+    message: String,
+    file: String,
+    line: UInt,
+    function: String
+  )
+}
+
+public struct RCKitLog {
+  public enum Level: Int, Comparable {
+    case debug = 0
+    case info
+    case notice
+    case warning
+    case error
+    case fault
+
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+      lhs.rawValue < rhs.rawValue
+    }
+
+    var osLogType: OSLogType {
+      switch self {
+      case .debug: return .debug
+      case .info: return .info
+      case .notice: return .default
+      case .warning: return .error
+      case .error: return .error
+      case .fault: return .fault
+      }
+    }
+  }
+
+  public static let defaultMinimumLevel: Level = {
     #if DEBUG
       return BuildConfig.isDebugging ? .debug : .info
     #else
@@ -14,67 +50,166 @@ public enum RCKitLog {
     #endif
   }()
 
-  private static let lock = NSLock()
-  private static var didBootstrap = false
-  private static var bootstrappedLevel: Logger.Level?
-
-  public static func bootstrap(minimumLevel: Logger.Level = defaultMinimumLevel) {
-    lock.lock()
-    defer { lock.unlock() }
-
-    if didBootstrap {
-      if let bootstrappedLevel, bootstrappedLevel != minimumLevel {
-        preconditionFailure(
-          "RCKitLog.bootstrap called more than once with different minimumLevel. Existing: \(bootstrappedLevel), new: \(minimumLevel)"
-        )
-      }
-      return
-    }
-
-    LoggingSystem.bootstrap { label in
-      var handler = UTCLogHandler(label: label)
-      handler.logLevel = minimumLevel
-      return handler
-    }
-
-    didBootstrap = true
-    bootstrappedLevel = minimumLevel
+  public static func makeLogger(
+    subsystem: String = "dev.rocry.rckit",
+    category: String = "general",
+    enableNSLogger: Bool = true,
+    minimumLevel: Level = defaultMinimumLevel
+  ) -> RCKitLog {
+    RCKitLog(
+      osLogger: SystemLogger(subsystem: subsystem, category: category),
+      minimumLevel: minimumLevel,
+      subsystem: subsystem,
+      category: category,
+      enableNSLogger: enableNSLogger
+    )
   }
 
-  public static func make(
-    label: String,
-    subsystem: String? = nil,
-    category: String? = nil,
-    minimumLevel: Logger.Level = defaultMinimumLevel,
-    metadata: Logger.Metadata = [:]
-  ) -> Logger {
-    bootstrap(minimumLevel: minimumLevel)
+  private let osLogger: SystemLogger
+  private let minimumLevel: Level
+  private let subsystem: String
+  private let category: String
+  private let sink: LogSink?
 
-    var logger = Logger(label: label)
-    logger.logLevel = minimumLevel
+  private init(
+    osLogger: SystemLogger,
+    minimumLevel: Level,
+    subsystem: String,
+    category: String,
+    enableNSLogger: Bool
+  ) {
+    self.osLogger = osLogger
+    self.minimumLevel = minimumLevel
+    self.subsystem = subsystem
+    self.category = category
+    self.sink = RCKitLog.makeNSLoggerSink(subsystem: subsystem, enableNSLogger: enableNSLogger)
 
-    var merged = metadata
-    if let subsystem {
-      merged["subsystem"] = .string(subsystem)
-    }
-    if let category {
-      merged["category"] = .string(category)
-    }
-    if !merged.isEmpty {
-      logger.metadata.merge(merged, uniquingKeysWith: { _, new in new })
-    }
-
-    return logger
+    log(.info, "Logger initialized", metadata: ["subsystem": subsystem, "category": category])
   }
 
-  public static let logger: Logger = make(
-    label: "dev.rocry.rckit",
-    subsystem: "dev.rocry.rckit",
-    category: "general"
-  )
+  @inline(__always)
+  private func shouldLog(_ level: Level) -> Bool {
+    level >= minimumLevel
+  }
+
+  public func log(
+    _ level: Level,
+    _ message: @autoclosure () -> String,
+    metadata: [String: CustomStringConvertible]? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    guard shouldLog(level) else { return }
+
+    let composed = render(
+      message(),
+      metadata: metadata,
+      file: file,
+      function: function,
+      line: line
+    )
+
+    osLogger.log(level: level.osLogType, "\(composed, privacy: .public)")
+    sink?.send(level: level, message: composed, file: file, line: line, function: function)
+  }
+
+  private func render(
+    _ message: String,
+    metadata: [String: CustomStringConvertible]?,
+    file: String,
+    function: String,
+    line: UInt
+  ) -> String {
+    var parts: [String] = [message]
+
+    if let metadata, !metadata.isEmpty {
+      let metaString = metadata
+        .sorted { $0.key < $1.key }
+        .map { "\($0.key)=\($0.value)" }
+        .joined(separator: " ")
+      parts.append("[\(metaString)]")
+    }
+
+    parts.append("(\(file)#\(line) \(function))")
+
+    return parts.joined(separator: " ")
+  }
+
+  public func debug(
+    _ message: @autoclosure () -> String,
+    metadata: [String: CustomStringConvertible]? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    log(.debug, message(), metadata: metadata, file: file, function: function, line: line)
+  }
+
+  public func info(
+    _ message: @autoclosure () -> String,
+    metadata: [String: CustomStringConvertible]? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    log(.info, message(), metadata: metadata, file: file, function: function, line: line)
+  }
+
+  public func notice(
+    _ message: @autoclosure () -> String,
+    metadata: [String: CustomStringConvertible]? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    log(.notice, message(), metadata: metadata, file: file, function: function, line: line)
+  }
+
+  public func warning(
+    _ message: @autoclosure () -> String,
+    metadata: [String: CustomStringConvertible]? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    log(.warning, message(), metadata: metadata, file: file, function: function, line: line)
+  }
+
+  public func error(
+    _ message: @autoclosure () -> String,
+    metadata: [String: CustomStringConvertible]? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    log(.error, message(), metadata: metadata, file: file, function: function, line: line)
+  }
+
+  public func fault(
+    _ message: @autoclosure () -> String,
+    metadata: [String: CustomStringConvertible]? = nil,
+    file: String = #fileID,
+    function: String = #function,
+    line: UInt = #line
+  ) {
+    log(.fault, message(), metadata: metadata, file: file, function: function, line: line)
+  }
+
+  private static func makeNSLoggerSink(
+    subsystem: String,
+    enableNSLogger: Bool
+  ) -> LogSink? {
+    #if canImport(NSLogger)
+      guard enableNSLogger else { return nil }
+      return NSLoggerSink(domain: subsystem)
+    #else
+      return nil
+    #endif
+  }
 }
 
-public extension Logger {
+public extension RCKitLog {
   func printDebugInfo() {
     info(
       """
@@ -91,85 +226,5 @@ public extension Logger {
       ---------------------------------------------
       """
     )
-  }
-}
-
-struct UTCLogHandler: LogHandler {
-  private let label: String
-
-  var logLevel: Logger.Level = .info
-  var metadata: Logger.Metadata = [:]
-  var metadataProvider: Logger.MetadataProvider?
-
-  init(label: String) {
-    self.label = label
-  }
-
-  func log(
-    level: Logger.Level,
-    message: Logger.Message,
-    metadata: Logger.Metadata?,
-    source: String,
-    file: String,
-    function: String,
-    line: UInt
-  ) {
-    let timestamp = UTCISO8601Timestamp.string(from: Date())
-    let levelString = level.rawValue.uppercased()
-    let combinedMetadata = Self.prepareMetadata(
-      base: self.metadata,
-      provider: metadataProvider,
-      explicit: metadata
-    )
-    let metadataString = combinedMetadata
-      .sorted(by: { $0.key < $1.key })
-      .map { "\($0.key)=\($0.value)" }
-      .joined(separator: " ")
-
-    let location = "\(file)#\(line) \(function)"
-    let metadataSuffix = metadataString.isEmpty ? "" : " [\(metadataString)]"
-    let logLine = "\(timestamp) \(levelString) \(label)\(metadataSuffix) \(message) (\(location))"
-
-    print(logLine)
-  }
-
-  subscript(metadataKey key: String) -> Logger.Metadata.Value? {
-    get { metadata[key] }
-    set { metadata[key] = newValue }
-  }
-
-  private static func prepareMetadata(
-    base: Logger.Metadata,
-    provider: Logger.MetadataProvider?,
-    explicit: Logger.Metadata?
-  ) -> Logger.Metadata {
-    var merged = base
-
-    let provided = provider?.get() ?? [:]
-    if !provided.isEmpty {
-      merged.merge(provided, uniquingKeysWith: { _, provided in provided })
-    }
-
-    if let explicit, !explicit.isEmpty {
-      merged.merge(explicit, uniquingKeysWith: { _, explicit in explicit })
-    }
-
-    return merged
-  }
-}
-
-private enum UTCISO8601Timestamp {
-  private static let lock = NSLock()
-  private static let formatter: ISO8601DateFormatter = {
-    let formatter = ISO8601DateFormatter()
-    formatter.timeZone = TimeZone(secondsFromGMT: 0)
-    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-    return formatter
-  }()
-
-  static func string(from date: Date) -> String {
-    lock.lock()
-    defer { lock.unlock() }
-    return formatter.string(from: date)
   }
 }

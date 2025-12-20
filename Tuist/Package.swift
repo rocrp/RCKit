@@ -11,7 +11,5 @@ import PackageDescription
 
 let package = Package(
     name: "RCKit",
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.0")
-    ]
+    dependencies: []
 )

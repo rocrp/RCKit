@@ -3,8 +3,7 @@ import XCTest
 @testable import RCKit
 
 final class RCKitLogTests: XCTestCase {
-  func testBootstrapAndLog() {
-    RCKitLog.bootstrap()
+  func testLog() {
     RCKit.log.info("log smoke test")
     RCKit.log.printDebugInfo()
   }

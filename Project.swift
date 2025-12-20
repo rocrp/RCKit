@@ -17,9 +17,7 @@ let project = Project(
       bundleId: "dev.rocry.RCKit",
       infoPlist: .default,
       sources: ["RCKit/Sources/**"],
-      dependencies: [
-        .external(name: "Logging")
-      ]
+      dependencies: []
     ),
     .target(
       name: "RCKitDemo",
