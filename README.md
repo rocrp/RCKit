@@ -30,3 +30,8 @@ Requires `swift-format` on PATH.
 - JSONCoding: ISO8601 UTC, fractional seconds
 - Logging: OSLog + NSLogger (optional)
 - Fail-fast: invalid inputs preconditionFailure
+
+## NSLogger (optional)
+- Add NSLogger framework to app target (CocoaPods/Carthage/manual).
+- Demo auto-starts when module available (`RCKitDemoApp`).
+- Manual start: `NSLoggerSupport.start()`; disable sink via `RCKitLog.makeLogger(enableNSLogger: false)`.
