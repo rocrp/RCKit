@@ -34,10 +34,6 @@ let project = Project(
             "_nslogger-ssl._tcp",
           ],
           "NSLocalNetworkUsageDescription": "Access to the local network for development builds",
-          "UILaunchScreen": [
-            "UIColorName": "",
-            "UIImageName": "",
-          ],
         ]
       ),
       sources: ["RCKitDemo/Sources/**"],
