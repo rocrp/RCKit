@@ -6,6 +6,8 @@ let settings = Settings.settings(
   ]
 )
 
+let macOSDeploymentTarget = "13.0"
+
 let project = Project(
   name: "RCKit",
   options: .options(automaticSchemesOptions: .disabled),
@@ -13,13 +15,17 @@ let project = Project(
   targets: [
     .target(
       name: "RCKit",
-      destinations: .iOS,
+      destinations: [.iPhone, .iPad, .mac],
       product: .framework,
       bundleId: "dev.rocry.RCKit",
+      deploymentTargets: .multiplatform(macOS: macOSDeploymentTarget),
       infoPlist: .default,
       sources: ["RCKit/Sources/**"],
       dependencies: [
-        .xcframework(path: "Dependencies/NSLoggerSwift.xcframework")
+        .xcframework(
+          path: "Dependencies/NSLoggerSwift.xcframework",
+          condition: .when([.ios])
+        )
       ]
     ),
     .target(
@@ -40,7 +46,22 @@ let project = Project(
       resources: ["RCKitDemo/Resources/**"],
       dependencies: [
         .target(name: "RCKit"),
-        .xcframework(path: "Dependencies/NSLoggerSwift.xcframework"),
+        .xcframework(
+          path: "Dependencies/NSLoggerSwift.xcframework",
+          condition: .when([.ios])
+        ),
+      ]
+    ),
+    .target(
+      name: "RCKitDemoMac",
+      destinations: .macOS,
+      product: .app,
+      bundleId: "dev.rocry.RCKitDemoMac",
+      deploymentTargets: .macOS(macOSDeploymentTarget),
+      infoPlist: .default,
+      sources: ["RCKitDemo/Sources/**"],
+      dependencies: [
+        .target(name: "RCKit"),
       ]
     ),
     .target(
@@ -67,6 +88,16 @@ let project = Project(
         configuration: .debug,
         executable: .target("RCKitDemo"),
         expandVariableFromTarget: .target("RCKitDemo")
+      )
+    ),
+    .scheme(
+      name: "RCKitDemoMac",
+      shared: true,
+      buildAction: .buildAction(targets: [.target("RCKitDemoMac")]),
+      runAction: .runAction(
+        configuration: .debug,
+        executable: .target("RCKitDemoMac"),
+        expandVariableFromTarget: .target("RCKitDemoMac")
       )
     ),
     .scheme(

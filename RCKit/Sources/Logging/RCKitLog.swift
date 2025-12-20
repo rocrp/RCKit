@@ -18,6 +18,12 @@ protocol LogSink {
 }
 
 public struct RCKitLog: @unchecked Sendable {
+  public enum RedactionMode: Sendable {
+    case none
+    case common
+    case keys(Set<String>)
+  }
+
   public enum Level: Int, Comparable, Sendable {
     case debug = 0
     case info
@@ -54,6 +60,7 @@ public struct RCKitLog: @unchecked Sendable {
     subsystem: String = "dev.rocry.rckit",
     category: String = "general",
     enableNSLogger: Bool = true,
+    redactionMode: RedactionMode = .common,
     minimumLevel: Level = defaultMinimumLevel
   ) -> RCKitLog {
     RCKitLog(
@@ -61,7 +68,8 @@ public struct RCKitLog: @unchecked Sendable {
       minimumLevel: minimumLevel,
       subsystem: subsystem,
       category: category,
-      enableNSLogger: enableNSLogger
+      enableNSLogger: enableNSLogger,
+      redactionMode: redactionMode
     )
   }
 
@@ -70,18 +78,21 @@ public struct RCKitLog: @unchecked Sendable {
   private let subsystem: String
   private let category: String
   private let sink: LogSink?
+  private let redactionMode: RedactionMode
 
   private init(
     osLogger: SystemLogger,
     minimumLevel: Level,
     subsystem: String,
     category: String,
-    enableNSLogger: Bool
+    enableNSLogger: Bool,
+    redactionMode: RedactionMode
   ) {
     self.osLogger = osLogger
     self.minimumLevel = minimumLevel
     self.subsystem = subsystem
     self.category = category
+    self.redactionMode = redactionMode
     self.sink = RCKitLog.makeNSLoggerSink(subsystem: subsystem, enableNSLogger: enableNSLogger)
 
     log(.info, "Logger initialized", metadata: ["subsystem": subsystem, "category": category])
@@ -124,11 +135,7 @@ public struct RCKitLog: @unchecked Sendable {
     var parts: [String] = [message]
 
     if let metadata, !metadata.isEmpty {
-      let metaString =
-        metadata
-        .sorted { $0.key < $1.key }
-        .map { "\($0.key)=\($0.value)" }
-        .joined(separator: " ")
+      let metaString = renderMetadata(metadata)
       parts.append("[\(metaString)]")
     }
 
@@ -136,6 +143,47 @@ public struct RCKitLog: @unchecked Sendable {
 
     return parts.joined(separator: " ")
   }
+
+  private func renderMetadata(_ metadata: [String: CustomStringConvertible]) -> String {
+    metadata
+      .sorted { $0.key < $1.key }
+      .map { key, value in
+        let renderedValue = shouldRedact(key: key) ? "<redacted>" : String(describing: value)
+        return "\(key)=\(renderedValue)"
+      }
+      .joined(separator: " ")
+  }
+
+  private func shouldRedact(key: String) -> Bool {
+    switch redactionMode {
+    case .none:
+      return false
+    case .keys(let keys):
+      return keys.contains(normalizeKey(key))
+    case .common:
+      let normalized = normalizeKey(key)
+      return RCKitLog.commonRedactionSubstrings.contains { normalized.contains($0) }
+    }
+  }
+
+  private func normalizeKey(_ key: String) -> String {
+    key.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+  }
+
+  private static let commonRedactionSubstrings: [String] = [
+    "password",
+    "passwd",
+    "secret",
+    "token",
+    "apikey",
+    "api_key",
+    "authorization",
+    "jwt",
+    "session",
+    "cookie",
+    "credential",
+    "bearer",
+  ]
 
   public func debug(
     _ message: @autoclosure () -> String,
@@ -201,11 +249,15 @@ public struct RCKitLog: @unchecked Sendable {
     subsystem: String,
     enableNSLogger: Bool
   ) -> LogSink? {
-    #if canImport(NSLoggerSwift)
-      guard enableNSLogger else { return nil }
-      return NSLoggerSink(domain: subsystem)
-    #else
+    #if os(macOS)
       return nil
+    #else
+      #if canImport(NSLoggerSwift)
+        guard enableNSLogger else { return nil }
+        return NSLoggerSink(domain: subsystem)
+      #else
+        return nil
+      #endif
     #endif
   }
 }

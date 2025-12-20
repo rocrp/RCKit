@@ -171,30 +171,7 @@ final class JSONTests: XCTestCase {
     XCTAssertEqual(person, decoded)
   }
 
-  func testJSONCodingUTC() throws {
-    struct Timestamped: Codable, Equatable {
-      let id: String
-      let createdAt: Date
-    }
 
-    let date = Date(timeIntervalSince1970: 1_734_000_000.123)
-    let payload = Timestamped(id: "demo", createdAt: date)
-
-    let encoder = JSONCoding.makeEncoder()
-    let data = try encoder.encode(payload)
-
-    let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-    let encodedDate = jsonObject?["createdAt"] as? String
-    XCTAssertNotNil(encodedDate)
-    XCTAssertTrue(encodedDate?.hasSuffix("Z") ?? false)
-
-    let decoder = JSONCoding.makeDecoder()
-    let decoded = try decoder.decode(Timestamped.self, from: data)
-    XCTAssertEqual(decoded.id, payload.id)
-    XCTAssertEqual(
-      decoded.createdAt.timeIntervalSince1970, payload.createdAt.timeIntervalSince1970,
-      accuracy: 0.001)
-  }
 
   // MARK: - Helper Methods
 

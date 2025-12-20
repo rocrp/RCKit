@@ -7,8 +7,20 @@
 
 import SwiftUI
 
-extension Color: Randomable {
-  private static var choices: [Self] {
+extension Color {
+  public static func random() -> Color {
+    random(in: defaultPalette)
+  }
+
+  public static func random(in palette: [Color]) -> Color {
+    precondition(!palette.isEmpty, "Color palette must not be empty")
+    guard let color = palette.randomElement() else {
+      preconditionFailure("Color palette must not be empty")
+    }
+    return color
+  }
+
+  private static var defaultPalette: [Color] {
     if #available(iOS 15.0, macOS 12.0, *) {
       return [
         .red,
@@ -27,26 +39,19 @@ extension Color: Randomable {
         .indigo,
         .brown,
       ]
-    } else {
-      return [
-        .red,
-        .orange,
-        .yellow,
-        .green,
-        .blue,
-        .purple,
-        .pink,
-        .white,
-        .gray,
-        .black,
-      ]
     }
-  }
 
-  public static func random(size: Int) -> Color {
-    guard let color = choices.randomElement() else {
-      preconditionFailure("Color choices array must not be empty")
-    }
-    return color
+    return [
+      .red,
+      .orange,
+      .yellow,
+      .green,
+      .blue,
+      .purple,
+      .pink,
+      .white,
+      .gray,
+      .black,
+    ]
   }
 }

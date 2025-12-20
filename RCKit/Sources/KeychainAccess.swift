@@ -27,8 +27,8 @@ public class KeychainAccess {
   public init(service: String, accessGroup: String? = nil) {
     self.service = service
     self.accessGroup = accessGroup
-    self.jsonEncoder = JSONCoding.makeEncoder()
-    self.jsonDecoder = JSONCoding.makeDecoder()
+    self.jsonEncoder = Self.makeUTCJSONEncoder()
+    self.jsonDecoder = Self.makeUTCJSONDecoder()
   }
 
   // MARK: - String Operations
@@ -223,6 +223,18 @@ public class KeychainAccess {
     }
 
     return query
+  }
+
+  private static func makeUTCJSONEncoder() -> JSONEncoder {
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    return encoder
+  }
+
+  private static func makeUTCJSONDecoder() -> JSONDecoder {
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    return decoder
   }
 }
 

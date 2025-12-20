@@ -27,7 +27,6 @@ Requires `swift-format` on PATH.
 ```
 
 ## Notes
-- JSONCoding: ISO8601 UTC, fractional seconds
 - Logging: OSLog + NSLoggerSwift (optional)
 - Fail-fast: invalid inputs preconditionFailure
 

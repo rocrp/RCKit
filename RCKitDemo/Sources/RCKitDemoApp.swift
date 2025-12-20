@@ -4,11 +4,15 @@ import SwiftUI
 @main
 struct RCKitDemoApp: App {
   init() {
-    #if canImport(NSLoggerSwift)
-      NSLoggerSupport.start()
-      RCKit.log.info("NSLogger available: true")
+    #if os(macOS)
+      RCKit.log.info("NSLogger disabled on macOS (no dependency linked)")
     #else
-      RCKit.log.info("NSLogger available: false")
+      #if canImport(NSLoggerSwift)
+        NSLoggerSupport.start()
+        RCKit.log.info("NSLogger available: true")
+      #else
+        RCKit.log.info("NSLogger available: false")
+      #endif
     #endif
   }
 
