@@ -8,6 +8,7 @@ let settings = Settings.settings(
 
 let project = Project(
   name: "RCKit",
+  options: .options(automaticSchemesOptions: .disabled),
   settings: settings,
   targets: [
     .target(
@@ -44,6 +45,34 @@ let project = Project(
       infoPlist: .default,
       sources: ["RCKit/Tests/**"],
       dependencies: [.target(name: "RCKit")]
+    ),
+  ],
+  schemes: [
+    .scheme(
+      name: "RCKit",
+      shared: true,
+      buildAction: .buildAction(targets: [.target("RCKit")])
+    ),
+    .scheme(
+      name: "RCKitDemo",
+      shared: true,
+      buildAction: .buildAction(targets: [.target("RCKitDemo")]),
+      runAction: .runAction(
+        configuration: .debug,
+        executable: .target("RCKitDemo"),
+        expandVariableFromTarget: .target("RCKitDemo")
+      )
+    ),
+    .scheme(
+      name: "RCKitTests",
+      shared: true,
+      buildAction: .buildAction(targets: [
+        .target("RCKit"),
+        .target("RCKitTests"),
+      ]),
+      testAction: .targets([
+        .testableTarget(target: .target("RCKitTests"))
+      ])
     ),
   ]
 )

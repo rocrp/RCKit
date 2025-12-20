@@ -9,6 +9,6 @@ lint:
 	./Scripts/lint.sh
 
 test:
-	tuist test RCKit
+	tuist test RCKitTests --no-selective-testing
 
 all: format lint test
