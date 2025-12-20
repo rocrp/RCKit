@@ -1,6 +1,6 @@
 # RCKit
 
-Swift 6 + SwiftUI helpers. Tuist-first. UTC timestamps.
+RoCry's Personal Swift 6 + SwiftUI helpers for iOS and macOS personal projects. Tuist-first. 
 
 ## Targets
 - `RCKit` framework
@@ -17,14 +17,6 @@ Dependency:
 ```
 
 No bootstrap needed. Use `RCKit.log` directly.
-
-## Format
-Requires `swift-format` on PATH.
-
-```bash
-./Scripts/format.sh
-./Scripts/lint.sh
-```
 
 ## Notes
 - Logging: OSLog + NSLoggerSwift (optional)
