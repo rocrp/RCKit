@@ -37,7 +37,8 @@ let project = Project(
       deploymentTargets: .multiplatform(iOS: iOSDeploymentTarget, macOS: macOSDeploymentTarget),
       infoPlist: .extendingDefault(
         with: [
-          // Keep an explicit launch screen to avoid legacy letterboxed UI on iPhone.
+          // Keep an explicit launch screen; without it iOS can fall back to a legacy
+          // letterboxed layout on modern iPhones.
           "UILaunchScreen": [
             "UIColorName": "",
             "UIImageName": "",
