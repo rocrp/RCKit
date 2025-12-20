@@ -201,7 +201,7 @@ public struct RCKitLog: @unchecked Sendable {
     subsystem: String,
     enableNSLogger: Bool
   ) -> LogSink? {
-    #if canImport(NSLogger)
+    #if canImport(NSLoggerSwift)
       guard enableNSLogger else { return nil }
       return NSLoggerSink(domain: subsystem)
     #else

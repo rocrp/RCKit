@@ -2,8 +2,8 @@
 //  NSLoggerSupport.swift
 //
 
-#if canImport(NSLogger)
-  import NSLogger
+#if canImport(NSLoggerSwift)
+  import NSLoggerSwift
 
   public enum NSLoggerSupport {
     public static let defaultOptions: UInt32 =
@@ -13,7 +13,7 @@
 
     public static func start(
       options: UInt32 = defaultOptions,
-      useBonjourForBuildUser: Bool = true
+      useBonjourForBuildUser: Bool = false
     ) {
       let logger = LoggerGetDefaultLogger()
       LoggerSetOptions(logger, options)

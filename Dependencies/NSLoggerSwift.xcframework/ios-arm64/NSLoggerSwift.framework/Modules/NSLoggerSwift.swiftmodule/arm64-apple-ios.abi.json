@@ -1,0 +1,1613 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "NSLoggerSwift",
+    "printedName": "NSLoggerSwift",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "NSLoggerSwift",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "UIKit",
+        "printedName": "UIKit",
+        "declKind": "Import",
+        "moduleName": "NSLoggerSwift"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "Logger",
+        "printedName": "Logger",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "shared",
+            "printedName": "shared",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Logger",
+                "printedName": "NSLoggerSwift.Logger",
+                "usr": "s:13NSLoggerSwift6LoggerC"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:13NSLoggerSwift6LoggerC6sharedACvpZ",
+            "mangledName": "$s13NSLoggerSwift6LoggerC6sharedACvpZ",
+            "moduleName": "NSLoggerSwift",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "Final",
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Logger",
+                    "printedName": "NSLoggerSwift.Logger",
+                    "usr": "s:13NSLoggerSwift6LoggerC"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:13NSLoggerSwift6LoggerC6sharedACvgZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6sharedACvgZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "TypeDecl",
+            "name": "Domain",
+            "printedName": "Domain",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "rawValue",
+                "printedName": "rawValue",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV8rawValueSSvp",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV8rawValueSSvp",
+                "moduleName": "NSLoggerSwift",
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV8rawValueSSvg",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV8rawValueSSvg",
+                    "moduleName": "NSLoggerSwift",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Constructor",
+                "name": "init",
+                "printedName": "init(rawValue:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Constructor",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV8rawValueAESS_tcfc",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV8rawValueAESS_tcfc",
+                "moduleName": "NSLoggerSwift",
+                "declAttributes": [
+                  "AccessControl"
+                ],
+                "init_kind": "Designated"
+              },
+              {
+                "kind": "Var",
+                "name": "app",
+                "printedName": "app",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV3appAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV3appAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV3appAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV3appAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "view",
+                "printedName": "view",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV4viewAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV4viewAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV4viewAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV4viewAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "layout",
+                "printedName": "layout",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV6layoutAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV6layoutAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV6layoutAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV6layoutAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "controller",
+                "printedName": "controller",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV10controllerAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV10controllerAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV10controllerAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV10controllerAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "routing",
+                "printedName": "routing",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV7routingAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV7routingAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV7routingAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV7routingAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "service",
+                "printedName": "service",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV7serviceAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV7serviceAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV7serviceAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV7serviceAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "network",
+                "printedName": "network",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV7networkAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV7networkAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV7networkAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV7networkAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "model",
+                "printedName": "model",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV5modelAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV5modelAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV5modelAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV5modelAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "cache",
+                "printedName": "cache",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV5cacheAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV5cacheAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV5cacheAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV5cacheAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "db",
+                "printedName": "db",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV2dbAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV2dbAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV2dbAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV2dbAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "io",
+                "printedName": "io",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV2ioAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV2ioAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Domain",
+                        "printedName": "NSLoggerSwift.Logger.Domain",
+                        "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV2ioAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV2ioAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Function",
+                "name": "custom",
+                "printedName": "custom(_:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Domain",
+                    "printedName": "NSLoggerSwift.Logger.Domain",
+                    "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV6customyAESSFZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV6customyAESSFZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "AccessControl"
+                ],
+                "funcSelfKind": "NonMutating"
+              }
+            ],
+            "declKind": "Struct",
+            "usr": "s:13NSLoggerSwift6LoggerC6DomainV",
+            "mangledName": "$s13NSLoggerSwift6LoggerC6DomainV",
+            "moduleName": "NSLoggerSwift",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "conformances": [
+              {
+                "kind": "Conformance",
+                "name": "Copyable",
+                "printedName": "Copyable",
+                "usr": "s:s8CopyableP",
+                "mangledName": "$ss8CopyableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Escapable",
+                "printedName": "Escapable",
+                "usr": "s:s9EscapableP",
+                "mangledName": "$ss9EscapableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "RawRepresentable",
+                "printedName": "RawRepresentable",
+                "children": [
+                  {
+                    "kind": "TypeWitness",
+                    "name": "RawValue",
+                    "printedName": "RawValue",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:SY",
+                "mangledName": "$sSY"
+              }
+            ]
+          },
+          {
+            "kind": "TypeDecl",
+            "name": "Level",
+            "printedName": "Level",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "rawValue",
+                "printedName": "rawValue",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV8rawValueSivp",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV8rawValueSivp",
+                "moduleName": "NSLoggerSwift",
+                "declAttributes": [
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Int",
+                        "printedName": "Swift.Int",
+                        "usr": "s:Si"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV8rawValueSivg",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV8rawValueSivg",
+                    "moduleName": "NSLoggerSwift",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Constructor",
+                "name": "init",
+                "printedName": "init(rawValue:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Level",
+                    "printedName": "NSLoggerSwift.Logger.Level",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Constructor",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV8rawValueAESi_tcfc",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV8rawValueAESi_tcfc",
+                "moduleName": "NSLoggerSwift",
+                "declAttributes": [
+                  "AccessControl"
+                ],
+                "init_kind": "Designated"
+              },
+              {
+                "kind": "Var",
+                "name": "error",
+                "printedName": "error",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Level",
+                    "printedName": "NSLoggerSwift.Logger.Level",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV5errorAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV5errorAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Level",
+                        "printedName": "NSLoggerSwift.Logger.Level",
+                        "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV5errorAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV5errorAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "warning",
+                "printedName": "warning",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Level",
+                    "printedName": "NSLoggerSwift.Logger.Level",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV7warningAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV7warningAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Level",
+                        "printedName": "NSLoggerSwift.Logger.Level",
+                        "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV7warningAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV7warningAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "important",
+                "printedName": "important",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Level",
+                    "printedName": "NSLoggerSwift.Logger.Level",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV9importantAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV9importantAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Level",
+                        "printedName": "NSLoggerSwift.Logger.Level",
+                        "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV9importantAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV9importantAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "info",
+                "printedName": "info",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Level",
+                    "printedName": "NSLoggerSwift.Logger.Level",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV4infoAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV4infoAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Level",
+                        "printedName": "NSLoggerSwift.Logger.Level",
+                        "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV4infoAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV4infoAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "debug",
+                "printedName": "debug",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Level",
+                    "printedName": "NSLoggerSwift.Logger.Level",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV5debugAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV5debugAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Level",
+                        "printedName": "NSLoggerSwift.Logger.Level",
+                        "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV5debugAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV5debugAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "verbose",
+                "printedName": "verbose",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Level",
+                    "printedName": "NSLoggerSwift.Logger.Level",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV7verboseAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV7verboseAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Level",
+                        "printedName": "NSLoggerSwift.Logger.Level",
+                        "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV7verboseAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV7verboseAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Var",
+                "name": "noise",
+                "printedName": "noise",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Level",
+                    "printedName": "NSLoggerSwift.Logger.Level",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV5noiseAEvpZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV5noiseAEvpZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "HasInitialValue",
+                  "HasStorage",
+                  "AccessControl"
+                ],
+                "isLet": true,
+                "hasStorage": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Level",
+                        "printedName": "NSLoggerSwift.Logger.Level",
+                        "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV5noiseAEvgZ",
+                    "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV5noiseAEvgZ",
+                    "moduleName": "NSLoggerSwift",
+                    "static": true,
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              },
+              {
+                "kind": "Function",
+                "name": "custom",
+                "printedName": "custom(_:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Level",
+                    "printedName": "NSLoggerSwift.Logger.Level",
+                    "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV6customyAESiFZ",
+                "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV6customyAESiFZ",
+                "moduleName": "NSLoggerSwift",
+                "static": true,
+                "declAttributes": [
+                  "AccessControl"
+                ],
+                "funcSelfKind": "NonMutating"
+              }
+            ],
+            "declKind": "Struct",
+            "usr": "s:13NSLoggerSwift6LoggerC5LevelV",
+            "mangledName": "$s13NSLoggerSwift6LoggerC5LevelV",
+            "moduleName": "NSLoggerSwift",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "conformances": [
+              {
+                "kind": "Conformance",
+                "name": "Copyable",
+                "printedName": "Copyable",
+                "usr": "s:s8CopyableP",
+                "mangledName": "$ss8CopyableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Escapable",
+                "printedName": "Escapable",
+                "usr": "s:s9EscapableP",
+                "mangledName": "$ss9EscapableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "RawRepresentable",
+                "printedName": "RawRepresentable",
+                "children": [
+                  {
+                    "kind": "TypeWitness",
+                    "name": "RawValue",
+                    "printedName": "RawValue",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Int",
+                        "printedName": "Swift.Int",
+                        "usr": "s:Si"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:SY",
+                "mangledName": "$sSY"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "log",
+            "printedName": "log(_:_:_:_:_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Domain",
+                "printedName": "NSLoggerSwift.Logger.Domain",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Level",
+                "printedName": "NSLoggerSwift.Logger.Level",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> Swift.String",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "typeAttributes": [
+                  "noescape"
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "hasDefaultArg": true,
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13NSLoggerSwift6LoggerC3logyyAC6DomainV_AC5LevelVSSyXKSSSiSStF",
+            "mangledName": "$s13NSLoggerSwift6LoggerC3logyyAC6DomainV_AC5LevelVSSyXKSSSiSStF",
+            "moduleName": "NSLoggerSwift",
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "log",
+            "printedName": "log(_:_:_:_:_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Domain",
+                "printedName": "NSLoggerSwift.Logger.Domain",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Level",
+                "printedName": "NSLoggerSwift.Logger.Level",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> UIKit.UIImage",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIImage",
+                    "printedName": "UIKit.UIImage",
+                    "usr": "c:objc(cs)UIImage"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "typeAttributes": [
+                  "noescape"
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "hasDefaultArg": true,
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13NSLoggerSwift6LoggerC3logyyAC6DomainV_AC5LevelVSo7UIImageCyXKSSSiSStF",
+            "mangledName": "$s13NSLoggerSwift6LoggerC3logyyAC6DomainV_AC5LevelVSo7UIImageCyXKSSSiSStF",
+            "moduleName": "NSLoggerSwift",
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "log",
+            "printedName": "log(_:_:_:_:_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Domain",
+                "printedName": "NSLoggerSwift.Logger.Domain",
+                "usr": "s:13NSLoggerSwift6LoggerC6DomainV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Level",
+                "printedName": "NSLoggerSwift.Logger.Level",
+                "usr": "s:13NSLoggerSwift6LoggerC5LevelV"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> Foundation.Data",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Data",
+                    "printedName": "Foundation.Data",
+                    "usr": "s:10Foundation4DataV"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "typeAttributes": [
+                  "noescape"
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "hasDefaultArg": true,
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13NSLoggerSwift6LoggerC3logyyAC6DomainV_AC5LevelV10Foundation4DataVyXKSSSiSStF",
+            "mangledName": "$s13NSLoggerSwift6LoggerC3logyyAC6DomainV_AC5LevelV10Foundation4DataVyXKSSSiSStF",
+            "moduleName": "NSLoggerSwift",
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:13NSLoggerSwift6LoggerC",
+        "mangledName": "$s13NSLoggerSwift6LoggerC",
+        "moduleName": "NSLoggerSwift",
+        "declAttributes": [
+          "Final",
+          "AccessControl",
+          "RawDocComment"
+        ],
+        "hasMissingDesignatedInitializers": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8
+  },
+  "ConstValues": [
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 2471,
+      "length": 5,
+      "value": "\"App\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 2528,
+      "length": 6,
+      "value": "\"View\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 2588,
+      "length": 8,
+      "value": "\"Layout\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 2654,
+      "length": 12,
+      "value": "\"Controller\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 2721,
+      "length": 9,
+      "value": "\"Routing\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 2785,
+      "length": 9,
+      "value": "\"Service\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 2849,
+      "length": 9,
+      "value": "\"Network\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 2911,
+      "length": 7,
+      "value": "\"Model\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 2971,
+      "length": 7,
+      "value": "\"Cache\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 3028,
+      "length": 4,
+      "value": "\"DB\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "StringLiteral",
+      "offset": 3082,
+      "length": 4,
+      "value": "\"IO\""
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "IntegerLiteral",
+      "offset": 3429,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "IntegerLiteral",
+      "offset": 3484,
+      "length": 1,
+      "value": "1"
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "IntegerLiteral",
+      "offset": 3541,
+      "length": 1,
+      "value": "2"
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "IntegerLiteral",
+      "offset": 3593,
+      "length": 1,
+      "value": "3"
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "IntegerLiteral",
+      "offset": 3646,
+      "length": 1,
+      "value": "4"
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "IntegerLiteral",
+      "offset": 3701,
+      "length": 1,
+      "value": "5"
+    },
+    {
+      "filePath": "\/var\/folders\/70\/y49mgsbs7j93vmc35vql08s40000gn\/T\/tmp.XOnHhlvKPF\/NSLogger\/Client\/iOS\/NSLogger.swift",
+      "kind": "IntegerLiteral",
+      "offset": 3754,
+      "length": 1,
+      "value": "6"
+    }
+  ]
+}

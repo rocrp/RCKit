@@ -2,11 +2,11 @@
 //  RCKitLog+NSLogger.swift
 //
 
-#if canImport(NSLogger)
-  import NSLogger
+#if canImport(NSLoggerSwift)
+  import NSLoggerSwift
 
   extension RCKitLog.Level {
-    var nsloggerLevel: NSLogger.Logger.Level {
+    var nsloggerLevel: NSLoggerSwift.Logger.Level {
       switch self {
       case .debug: return .debug
       case .info: return .info
@@ -19,12 +19,12 @@
   }
 
   struct NSLoggerSink: LogSink {
-    private let logger: NSLogger.Logger
-    private let domain: NSLogger.Logger.Domain
+    private let logger: NSLoggerSwift.Logger
+    private let domain: NSLoggerSwift.Logger.Domain
 
     init(domain: String) {
-      self.logger = NSLogger.Logger.shared
-      self.domain = NSLogger.Logger.Domain(rawValue: domain)
+      self.logger = NSLoggerSwift.Logger.shared
+      self.domain = NSLoggerSwift.Logger.Domain(rawValue: domain)
     }
 
     func send(

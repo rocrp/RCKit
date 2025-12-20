@@ -28,10 +28,12 @@ Requires `swift-format` on PATH.
 
 ## Notes
 - JSONCoding: ISO8601 UTC, fractional seconds
-- Logging: OSLog + NSLogger (optional)
+- Logging: OSLog + NSLoggerSwift (optional)
 - Fail-fast: invalid inputs preconditionFailure
 
 ## NSLogger (optional)
-- Add NSLogger framework to app target (CocoaPods/Carthage/manual).
-- Demo auto-starts when module available (`RCKitDemoApp`).
-- Manual start: `NSLoggerSupport.start()`; disable sink via `RCKitLog.makeLogger(enableNSLogger: false)`.
+- Vendored: `Dependencies/NSLoggerSwift.xcframework` (module `NSLoggerSwift`).
+- Demo auto-starts and logs availability in `RCKitDemoApp`.
+- Info.plist for demo already includes `NSBonjourServices` + `NSLocalNetworkUsageDescription`.
+- Manual start: `NSLoggerSupport.start()`; for per-user Bonjour use `useBonjourForBuildUser: true` and set viewer to your `$USER`.
+- Disable sink via `RCKitLog.makeLogger(enableNSLogger: false)`.

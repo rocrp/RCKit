@@ -18,7 +18,9 @@ let project = Project(
       bundleId: "dev.rocry.RCKit",
       infoPlist: .default,
       sources: ["RCKit/Sources/**"],
-      dependencies: []
+      dependencies: [
+        .xcframework(path: "Dependencies/NSLoggerSwift.xcframework")
+      ]
     ),
     .target(
       name: "RCKitDemo",
@@ -27,15 +29,23 @@ let project = Project(
       bundleId: "dev.rocry.RCKitDemo",
       infoPlist: .extendingDefault(
         with: [
+          "NSBonjourServices": [
+            "_nslogger._tcp",
+            "_nslogger-ssl._tcp",
+          ],
+          "NSLocalNetworkUsageDescription": "Access to the local network for development builds",
           "UILaunchScreen": [
             "UIColorName": "",
             "UIImageName": "",
-          ]
+          ],
         ]
       ),
       sources: ["RCKitDemo/Sources/**"],
       resources: ["RCKitDemo/Resources/**"],
-      dependencies: [.target(name: "RCKit")]
+      dependencies: [
+        .target(name: "RCKit"),
+        .xcframework(path: "Dependencies/NSLoggerSwift.xcframework"),
+      ]
     ),
     .target(
       name: "RCKitTests",

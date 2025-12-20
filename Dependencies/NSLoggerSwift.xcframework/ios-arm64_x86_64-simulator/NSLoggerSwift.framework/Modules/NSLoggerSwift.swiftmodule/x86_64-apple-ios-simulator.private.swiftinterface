@@ -1,0 +1,49 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.2.3 effective-4.1.50 (swiftlang-6.2.3.3.21 clang-1700.6.3.2)
+// swift-module-flags: -target x86_64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 4 -enforce-exclusivity=checked -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name NSLoggerSwift
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.2.3
+import Foundation
+@_exported import NSLoggerSwift
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+public typealias Image = UIKit.UIImage
+@_hasMissingDesignatedInitializers final public class Logger {
+  public static let shared: NSLoggerSwift.Logger
+  public struct Domain : Swift.RawRepresentable {
+    public let rawValue: Swift.String
+    public init(rawValue: Swift.String)
+    public static let app: NSLoggerSwift.Logger.Domain
+    public static let view: NSLoggerSwift.Logger.Domain
+    public static let layout: NSLoggerSwift.Logger.Domain
+    public static let controller: NSLoggerSwift.Logger.Domain
+    public static let routing: NSLoggerSwift.Logger.Domain
+    public static let service: NSLoggerSwift.Logger.Domain
+    public static let network: NSLoggerSwift.Logger.Domain
+    public static let model: NSLoggerSwift.Logger.Domain
+    public static let cache: NSLoggerSwift.Logger.Domain
+    public static let db: NSLoggerSwift.Logger.Domain
+    public static let io: NSLoggerSwift.Logger.Domain
+    public static func custom(_ value: Swift.String) -> NSLoggerSwift.Logger.Domain
+    public typealias RawValue = Swift.String
+  }
+  public struct Level : Swift.RawRepresentable {
+    public let rawValue: Swift.Int
+    public init(rawValue: Swift.Int)
+    public static let error: NSLoggerSwift.Logger.Level
+    public static let warning: NSLoggerSwift.Logger.Level
+    public static let important: NSLoggerSwift.Logger.Level
+    public static let info: NSLoggerSwift.Logger.Level
+    public static let debug: NSLoggerSwift.Logger.Level
+    public static let verbose: NSLoggerSwift.Logger.Level
+    public static let noise: NSLoggerSwift.Logger.Level
+    public static func custom(_ value: Swift.Int) -> NSLoggerSwift.Logger.Level
+    public typealias RawValue = Swift.Int
+  }
+  final public func log(_ domain: NSLoggerSwift.Logger.Domain, _ level: NSLoggerSwift.Logger.Level, _ message: @autoclosure () -> Swift.String, _ file: Swift.String = #file, _ line: Swift.Int = #line, _ function: Swift.String = #function)
+  final public func log(_ domain: NSLoggerSwift.Logger.Domain, _ level: NSLoggerSwift.Logger.Level, _ image: @autoclosure () -> NSLoggerSwift.Image, _ file: Swift.String = #file, _ line: Swift.Int = #line, _ function: Swift.String = #function)
+  final public func log(_ domain: NSLoggerSwift.Logger.Domain, _ level: NSLoggerSwift.Logger.Level, _ data: @autoclosure () -> Foundation.Data, _ file: Swift.String = #file, _ line: Swift.Int = #line, _ function: Swift.String = #function)
+  @objc deinit
+}
