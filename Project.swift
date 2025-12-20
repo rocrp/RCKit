@@ -12,6 +12,10 @@ let iOSDeploymentTarget = "18.0"
 let project = Project(
   name: "RCKit",
   options: .options(automaticSchemesOptions: .disabled),
+  packages: [
+    .package(url: "https://github.com/pointfreeco/sqlite-data", from: "1.4.1"),
+    .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.10.0"),
+  ],
   settings: settings,
   targets: [
     .target(
@@ -72,6 +76,19 @@ let project = Project(
       sources: ["RCKit/Tests/**"],
       dependencies: [.target(name: "RCKit")]
     ),
+    .target(
+      name: "RCKitDemoTests",
+      destinations: .iOS,
+      product: .unitTests,
+      bundleId: "dev.rocry.RCKitDemoTests",
+      deploymentTargets: .iOS(iOSDeploymentTarget),
+      infoPlist: .default,
+      sources: ["RCKitDemo/Tests/**"],
+      dependencies: [
+        .target(name: "RCKitDemo"),
+        .package(product: "SQLiteData"),
+      ]
+    ),
   ],
   schemes: [
     .scheme(
@@ -98,6 +115,17 @@ let project = Project(
       ]),
       testAction: .targets([
         .testableTarget(target: .target("RCKitTests"))
+      ])
+    ),
+    .scheme(
+      name: "RCKitDemoTests",
+      shared: true,
+      buildAction: .buildAction(targets: [
+        .target("RCKitDemo"),
+        .target("RCKitDemoTests"),
+      ]),
+      testAction: .targets([
+        .testableTarget(target: .target("RCKitDemoTests"))
       ])
     ),
   ]
