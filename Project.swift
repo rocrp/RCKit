@@ -61,6 +61,10 @@ let project = Project(
         .package(product: "Dependencies"),
         .package(product: "SQLiteData"),
         .xcframework(
+          path: "Dependencies/MMKV.xcframework",
+          condition: .when([.ios, .mac])
+        ),
+        .xcframework(
           path: "Dependencies/NSLoggerSwift.xcframework",
           condition: .when([.ios])
         ),
@@ -87,6 +91,10 @@ let project = Project(
       dependencies: [
         .target(name: "RCKitDemo"),
         .package(product: "SQLiteData"),
+        .xcframework(
+          path: "Dependencies/MMKV.xcframework",
+          condition: .when([.ios])
+        ),
       ]
     ),
   ],
