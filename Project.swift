@@ -62,7 +62,7 @@ let project = Project(
         .package(product: "SQLiteData"),
         .xcframework(
           path: "Dependencies/MMKV.xcframework",
-          condition: .when([.ios, .mac])
+          condition: .when([.ios, .macos])
         ),
         .xcframework(
           path: "Dependencies/NSLoggerSwift.xcframework",
