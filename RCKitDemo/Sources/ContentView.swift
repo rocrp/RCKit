@@ -51,7 +51,7 @@ struct ContentView: View {
           }
         }
       }
-        .navigationTitle("RCKit Demo")
+      .navigationTitle("RCKit Demo")
       .task {
         refresh()
       }

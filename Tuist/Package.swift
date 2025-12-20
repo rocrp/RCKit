@@ -2,14 +2,14 @@
 import PackageDescription
 
 #if TUIST
-    import struct ProjectDescription.PackageSettings
+  import struct ProjectDescription.PackageSettings
 
-    let packageSettings = PackageSettings(
-        productTypes: [:]
-    )
+  let packageSettings = PackageSettings(
+    productTypes: [:]
+  )
 #endif
 
 let package = Package(
-    name: "RCKit",
-    dependencies: []
+  name: "RCKit",
+  dependencies: []
 )

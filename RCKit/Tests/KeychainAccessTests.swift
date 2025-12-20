@@ -5,6 +5,7 @@
 //  Created by RoCry on 2024/5/1.
 //
 
+import Security
 import XCTest
 
 @testable import RCKit
@@ -29,9 +30,21 @@ final class KeychainAccessTests: XCTestCase {
   private let dataKey = "test_data"
   private let objectKey = "test_object"
 
-  override func setUp() {
-    super.setUp()
+  override func setUpWithError() throws {
+    try super.setUpWithError()
     keychain = KeychainAccess(service: testService)
+
+    let probeKey = "probe_keychain_access"
+    let probeResult = keychain.set("probe", for: probeKey)
+    if case .failure(let error) = probeResult {
+      if case .unhandledError(let status) = error,
+        status == errSecMissingEntitlement || status == errSecNotAvailable
+      {
+        throw XCTSkip("Keychain unavailable for tests (status: \(status))")
+      }
+      XCTFail("Keychain probe failed: \(error)")
+    }
+    _ = keychain.delete(for: probeKey)
 
     // Clean up any leftover data from previous test runs
     _ = keychain.delete(for: stringKey)

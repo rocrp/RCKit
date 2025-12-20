@@ -38,9 +38,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testGetRequest() async throws {
     // Set up mock response
-    MockURLProtocol.mockResponses["/test"] = MockResponse(
-      statusCode: 200,
-      data: testJSON
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 200,
+        data: testJSON
+      ),
+      for: "/test"
     )
 
     // Make the request
@@ -53,16 +56,19 @@ final class NetworkManagerTests: XCTestCase {
     XCTAssertEqual(json?["email"] as? String, "test@example.com")
 
     // Verify the request was made with the correct method
-    let request = MockURLProtocol.requestHistory.last
+    let request = MockURLProtocol.lastRequest()
     XCTAssertEqual(request?.httpMethod, "GET")
   }
 
   func testGetWithParameters() async throws {
     // Set up mock response - match any query string since parameter order is not guaranteed
-    MockURLProtocol.mockResponses[".*\\?.*param1=value1.*"] = MockResponse(
-      statusCode: 200,
-      data: testJSON,
-      isRegex: true
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 200,
+        data: testJSON,
+        isRegex: true
+      ),
+      for: ".*\\?.*param1=value1.*"
     )
 
     // Make the request with parameters
@@ -76,7 +82,7 @@ final class NetworkManagerTests: XCTestCase {
     XCTAssertEqual(json?["id"] as? Int, 123)
 
     // Verify the request was made with the correct query parameters
-    let request = MockURLProtocol.requestHistory.last
+    let request = MockURLProtocol.lastRequest()
     XCTAssertNotNil(request?.url?.query)
     XCTAssertTrue(request?.url?.query?.contains("param1=value1") ?? false)
     XCTAssertTrue(request?.url?.query?.contains("param2=value2") ?? false)
@@ -84,9 +90,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testGetAndDecodeResponse() async throws {
     // Set up mock response
-    MockURLProtocol.mockResponses["/user"] = MockResponse(
-      statusCode: 200,
-      data: testJSON
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 200,
+        data: testJSON
+      ),
+      for: "/user"
     )
 
     // Make the request and decode response
@@ -105,9 +114,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testPostWithData() async throws {
     // Set up mock response
-    MockURLProtocol.mockResponses["/create"] = MockResponse(
-      statusCode: 201,
-      data: testJSON
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 201,
+        data: testJSON
+      ),
+      for: "/create"
     )
 
     // Test data to send
@@ -124,16 +136,19 @@ final class NetworkManagerTests: XCTestCase {
     XCTAssertEqual(json?["id"] as? Int, 123)
 
     // Verify the request was made with the correct method and body
-    let request = MockURLProtocol.requestHistory.last
+    let request = MockURLProtocol.lastRequest()
     XCTAssertEqual(request?.httpMethod, "POST")
     XCTAssertEqual(request?.httpBody, postData)
   }
 
   func testPostWithJSON() async throws {
     // Set up mock response
-    MockURLProtocol.mockResponses["/create-json"] = MockResponse(
-      statusCode: 201,
-      data: testJSON
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 201,
+        data: testJSON
+      ),
+      for: "/create-json"
     )
 
     // Codable object to send
@@ -154,7 +169,7 @@ final class NetworkManagerTests: XCTestCase {
     XCTAssertEqual(user.id, 123)
 
     // Verify the request was made with the correct method, body and Content-Type header
-    let request = MockURLProtocol.requestHistory.last
+    let request = MockURLProtocol.lastRequest()
     XCTAssertEqual(request?.httpMethod, "POST")
     XCTAssertEqual(request?.value(forHTTPHeaderField: "Content-Type"), "application/json")
 
@@ -169,9 +184,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testPostWithEncodableObject() async throws {
     // Set up mock response
-    MockURLProtocol.mockResponses["/create-user"] = MockResponse(
-      statusCode: 201,
-      data: testJSON
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 201,
+        data: testJSON
+      ),
+      for: "/create-user"
     )
 
     // Encodable object to send
@@ -188,7 +206,7 @@ final class NetworkManagerTests: XCTestCase {
     XCTAssertEqual(json?["id"] as? Int, 123)
 
     // Verify the request was made with the correct method, body and Content-Type header
-    let request = MockURLProtocol.requestHistory.last
+    let request = MockURLProtocol.lastRequest()
     XCTAssertEqual(request?.httpMethod, "POST")
     XCTAssertEqual(request?.value(forHTTPHeaderField: "Content-Type"), "application/json")
 
@@ -206,9 +224,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testPutRequest() async throws {
     // Set up mock response
-    MockURLProtocol.mockResponses["/update"] = MockResponse(
-      statusCode: 200,
-      data: testJSON
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 200,
+        data: testJSON
+      ),
+      for: "/update"
     )
 
     // Test data to send
@@ -225,7 +246,7 @@ final class NetworkManagerTests: XCTestCase {
     XCTAssertEqual(json?["id"] as? Int, 123)
 
     // Verify the request was made with the correct method and body
-    let request = MockURLProtocol.requestHistory.last
+    let request = MockURLProtocol.lastRequest()
     XCTAssertEqual(request?.httpMethod, "PUT")
     XCTAssertEqual(request?.httpBody, putData)
   }
@@ -234,9 +255,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testDeleteRequest() async throws {
     // Set up mock response
-    MockURLProtocol.mockResponses["/delete"] = MockResponse(
-      statusCode: 204,
-      data: Data()
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 204,
+        data: Data()
+      ),
+      for: "/delete"
     )
 
     // Make the request
@@ -246,7 +270,7 @@ final class NetworkManagerTests: XCTestCase {
     XCTAssertEqual(data.count, 0)
 
     // Verify the request was made with the correct method
-    let request = MockURLProtocol.requestHistory.last
+    let request = MockURLProtocol.lastRequest()
     XCTAssertEqual(request?.httpMethod, "DELETE")
   }
 
@@ -254,9 +278,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testBadRequestError() async {
     // Set up mock response
-    MockURLProtocol.mockResponses["/bad-request"] = MockResponse(
-      statusCode: 400,
-      data: "Bad request".data(using: .utf8)!
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 400,
+        data: "Bad request".data(using: .utf8)!
+      ),
+      for: "/bad-request"
     )
 
     // Make the request and expect an error
@@ -276,9 +303,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testUnauthorizedError() async {
     // Set up mock response
-    MockURLProtocol.mockResponses["/unauthorized"] = MockResponse(
-      statusCode: 401,
-      data: Data()
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 401,
+        data: Data()
+      ),
+      for: "/unauthorized"
     )
 
     // Make the request and expect an error
@@ -298,9 +328,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testServerError() async {
     // Set up mock response
-    MockURLProtocol.mockResponses["/server-error"] = MockResponse(
-      statusCode: 500,
-      data: Data()
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 500,
+        data: Data()
+      ),
+      for: "/server-error"
     )
 
     // Make the request and expect an error
@@ -322,9 +355,12 @@ final class NetworkManagerTests: XCTestCase {
 
   func testDefaultHeaders() async throws {
     // Set up mock response
-    MockURLProtocol.mockResponses["/headers"] = MockResponse(
-      statusCode: 200,
-      data: testJSON
+    MockURLProtocol.setResponse(
+      MockResponse(
+        statusCode: 200,
+        data: testJSON
+      ),
+      for: "/headers"
     )
 
     // Set default headers
@@ -337,7 +373,7 @@ final class NetworkManagerTests: XCTestCase {
     )
 
     // Verify the request was made with both headers
-    let request = MockURLProtocol.requestHistory.last
+    let request = MockURLProtocol.lastRequest()
     XCTAssertEqual(request?.value(forHTTPHeaderField: "X-Default-Header"), "DefaultValue")
     XCTAssertEqual(request?.value(forHTTPHeaderField: "X-Custom-Header"), "CustomValue")
 
@@ -348,7 +384,7 @@ final class NetworkManagerTests: XCTestCase {
     _ = try await networkManager.get("https://example.com/headers")
 
     // Verify the default header is no longer present
-    let newRequest = MockURLProtocol.requestHistory.last
+    let newRequest = MockURLProtocol.lastRequest()
     XCTAssertNil(newRequest?.value(forHTTPHeaderField: "X-Default-Header"))
 
     // Test clearing all default headers
@@ -359,7 +395,7 @@ final class NetworkManagerTests: XCTestCase {
     _ = try await networkManager.get("https://example.com/headers")
 
     // Verify no default headers are present
-    let finalRequest = MockURLProtocol.requestHistory.last
+    let finalRequest = MockURLProtocol.lastRequest()
     XCTAssertNil(finalRequest?.value(forHTTPHeaderField: "X-Another-Header"))
   }
 
@@ -426,16 +462,19 @@ extension NetworkError: Equatable {
 // MARK: - Mock URL Protocol
 
 class MockURLProtocol: URLProtocol {
-  // Dictionary to store mock responses by URL
-  static var mockResponses: [String: MockResponse] = [:]
-
-  // Array to store request history for testing
-  static var requestHistory: [URLRequest] = []
+  private static let store = MockURLStore()
 
   // Reset all mock data
   static func reset() {
-    mockResponses = [:]
-    requestHistory = []
+    store.reset()
+  }
+
+  static func setResponse(_ response: MockResponse, for pattern: String) {
+    store.setResponse(response, for: pattern)
+  }
+
+  static func lastRequest() -> URLRequest? {
+    store.lastRequest()
   }
 
   // URLProtocol methods
@@ -481,7 +520,7 @@ class MockURLProtocol: URLProtocol {
       requestCopy.httpBody = originalBody
     }
 
-    MockURLProtocol.requestHistory.append(requestCopy)
+    MockURLProtocol.store.appendRequest(requestCopy)
 
     guard let url = request.url?.absoluteString else {
       client?.urlProtocol(self, didFailWithError: NetworkError.invalidURL("missing URL"))
@@ -492,11 +531,12 @@ class MockURLProtocol: URLProtocol {
     var mockResponse: MockResponse?
 
     // First try exact match
-    if let exactMatch = MockURLProtocol.mockResponses[url] {
+    let responses = MockURLProtocol.store.responsesSnapshot()
+    if let exactMatch = responses[url] {
       mockResponse = exactMatch
     } else {
       // Then try pattern matching
-      for (urlPattern, response) in MockURLProtocol.mockResponses {
+      for (urlPattern, response) in responses {
         if response.isRegex {
           // Regex pattern matching
           if let regex = try? NSRegularExpression(pattern: urlPattern),
@@ -544,4 +584,41 @@ struct MockResponse {
   let data: Data
   var headers: [String: String] = [:]
   var isRegex: Bool = false
+}
+
+private final class MockURLStore: @unchecked Sendable {
+  private let lock = NSLock()
+  private var mockResponses: [String: MockResponse] = [:]
+  private var requestHistory: [URLRequest] = []
+
+  func reset() {
+    lock.lock()
+    defer { lock.unlock() }
+    mockResponses = [:]
+    requestHistory = []
+  }
+
+  func setResponse(_ response: MockResponse, for pattern: String) {
+    lock.lock()
+    defer { lock.unlock() }
+    mockResponses[pattern] = response
+  }
+
+  func responsesSnapshot() -> [String: MockResponse] {
+    lock.lock()
+    defer { lock.unlock() }
+    return mockResponses
+  }
+
+  func appendRequest(_ request: URLRequest) {
+    lock.lock()
+    defer { lock.unlock() }
+    requestHistory.append(request)
+  }
+
+  func lastRequest() -> URLRequest? {
+    lock.lock()
+    defer { lock.unlock() }
+    return requestHistory.last
+  }
 }

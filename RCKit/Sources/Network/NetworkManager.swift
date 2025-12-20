@@ -184,7 +184,8 @@ public final class NetworkManager: @unchecked Sendable {
   ///   - type: The type to decode the response as
   /// - Returns: The decoded object
   @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, visionOS 1.0, *)
-  public func decodeResponse<T: Decodable>(_ request: URLRequest, as type: T.Type) async throws -> T {
+  public func decodeResponse<T: Decodable>(_ request: URLRequest, as type: T.Type) async throws -> T
+  {
     let data = try await performRequest(request)
     do {
       return try jsonDecoder.decode(type, from: data)

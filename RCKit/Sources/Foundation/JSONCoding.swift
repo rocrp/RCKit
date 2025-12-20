@@ -34,25 +34,22 @@ public enum JSONCoding {
 }
 
 private enum UTCISO8601 {
-  private static let formatterWithFractionalSeconds: ISO8601DateFormatter = {
-    let formatter = ISO8601DateFormatter()
-    formatter.timeZone = TimeZone(secondsFromGMT: 0)
-    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-    return formatter
-  }()
-
-  private static let formatter: ISO8601DateFormatter = {
-    let formatter = ISO8601DateFormatter()
-    formatter.timeZone = TimeZone(secondsFromGMT: 0)
-    formatter.formatOptions = [.withInternetDateTime]
-    return formatter
-  }()
-
   static func string(from date: Date) -> String {
-    formatterWithFractionalSeconds.string(from: date)
+    makeFormatter(withFractionalSeconds: true).string(from: date)
   }
 
   static func date(from string: String) -> Date? {
-    formatterWithFractionalSeconds.date(from: string) ?? formatter.date(from: string)
+    makeFormatter(withFractionalSeconds: true).date(from: string)
+      ?? makeFormatter(withFractionalSeconds: false).date(from: string)
+  }
+
+  private static func makeFormatter(withFractionalSeconds: Bool) -> ISO8601DateFormatter {
+    let formatter = ISO8601DateFormatter()
+    formatter.timeZone = TimeZone(secondsFromGMT: 0)
+    formatter.formatOptions =
+      withFractionalSeconds
+      ? [.withInternetDateTime, .withFractionalSeconds]
+      : [.withInternetDateTime]
+    return formatter
   }
 }

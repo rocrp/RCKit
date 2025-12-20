@@ -26,7 +26,7 @@ extension Color {
 }
 
 extension View {
-  @inlinable public func debugBorder<S>(
+  @MainActor @inlinable public func debugBorder<S>(
     _ content: S = Color.randomBorderColor,
     width: CGFloat = 1.0 / Screen.scale
   ) -> some View where S: ShapeStyle {

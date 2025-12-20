@@ -17,8 +17,8 @@ protocol LogSink {
   )
 }
 
-public struct RCKitLog {
-  public enum Level: Int, Comparable {
+public struct RCKitLog: @unchecked Sendable {
+  public enum Level: Int, Comparable, Sendable {
     case debug = 0
     case info
     case notice
@@ -124,7 +124,8 @@ public struct RCKitLog {
     var parts: [String] = [message]
 
     if let metadata, !metadata.isEmpty {
-      let metaString = metadata
+      let metaString =
+        metadata
         .sorted { $0.key < $1.key }
         .map { "\($0.key)=\($0.value)" }
         .joined(separator: " ")
@@ -209,8 +210,8 @@ public struct RCKitLog {
   }
 }
 
-public extension RCKitLog {
-  func printDebugInfo() {
+extension RCKitLog {
+  public func printDebugInfo() {
     info(
       """
       ---------------- Debug Info ----------------

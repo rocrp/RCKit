@@ -36,8 +36,7 @@ extension XID {
 
   fileprivate static let machineID = UUID().uuidString.sha256
   fileprivate static let pid = ProcessInfo.processInfo.processIdentifier
-  fileprivate static var counter = UInt32.random(in: 0...UInt32.max)
-  fileprivate static let counterLock = NSLock()
+  fileprivate static let counterBox = CounterBox()
 
   fileprivate static let bytifiedMachineID = [UInt8](machineID.utf8)
   fileprivate static let bytifiedPID = pid.bytes
@@ -55,10 +54,7 @@ extension XID {
   }
 
   fileprivate static func _bytifyCounter() -> [UInt8] {
-    counterLock.lock()
-    defer { counterLock.unlock() }
-    counter = counter &+ 1
-    return counter.bytes
+    return counterBox.next().bytes
   }
 
   fileprivate static func _generateBytes(date: Date) throws -> [UInt8] {
@@ -107,5 +103,17 @@ extension FixedWidthInteger {
   var bytes: [UInt8] {
     var value = self.bigEndian
     return withUnsafeBytes(of: &value) { Array($0) }
+  }
+}
+
+private final class CounterBox: @unchecked Sendable {
+  private let lock = NSLock()
+  private var value: UInt32 = UInt32.random(in: 0...UInt32.max)
+
+  func next() -> UInt32 {
+    lock.lock()
+    defer { lock.unlock() }
+    value = value &+ 1
+    return value
   }
 }

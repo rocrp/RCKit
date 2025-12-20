@@ -20,7 +20,7 @@ import Foundation
 #endif
 
 public enum Screen {
-  public static var scale: CGFloat {
+  @MainActor public static var scale: CGFloat {
     #if os(iOS) || os(tvOS) || os(visionOS)
       return UIScreen.main.scale
     #elseif os(macOS)
