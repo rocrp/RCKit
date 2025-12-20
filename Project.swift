@@ -31,10 +31,10 @@ let project = Project(
     ),
     .target(
       name: "RCKitDemo",
-      destinations: .iOS,
+      destinations: [.iPhone, .iPad, .mac],
       product: .app,
       bundleId: "dev.rocry.RCKitDemo",
-      deploymentTargets: .iOS(iOSDeploymentTarget),
+      deploymentTargets: .multiplatform(iOS: iOSDeploymentTarget, macOS: macOSDeploymentTarget),
       infoPlist: .extendingDefault(
         with: [
           "NSBonjourServices": [
@@ -52,18 +52,6 @@ let project = Project(
           path: "Dependencies/NSLoggerSwift.xcframework",
           condition: .when([.ios])
         ),
-      ]
-    ),
-    .target(
-      name: "RCKitDemoMac",
-      destinations: .macOS,
-      product: .app,
-      bundleId: "dev.rocry.RCKitDemoMac",
-      deploymentTargets: .macOS(macOSDeploymentTarget),
-      infoPlist: .default,
-      sources: ["RCKitDemo/Sources/**"],
-      dependencies: [
-        .target(name: "RCKit"),
       ]
     ),
     .target(
@@ -91,16 +79,6 @@ let project = Project(
         configuration: .debug,
         executable: .target("RCKitDemo"),
         expandVariableFromTarget: .target("RCKitDemo")
-      )
-    ),
-    .scheme(
-      name: "RCKitDemoMac",
-      shared: true,
-      buildAction: .buildAction(targets: [.target("RCKitDemoMac")]),
-      runAction: .runAction(
-        configuration: .debug,
-        executable: .target("RCKitDemoMac"),
-        expandVariableFromTarget: .target("RCKitDemoMac")
       )
     ),
     .scheme(

@@ -32,19 +32,18 @@ struct ContentView: View {
     }
     .navigationTitle("RCKit Demo")
     #if os(macOS)
-      .navigationSplitViewColumnWidth(min: 180, ideal: 220)
+      .navigationSplitViewColumnWidth(min: 180, ideal: 200)
       .listStyle(.sidebar)
     #endif
   }
 
   private func detailView(for section: DemoSection) -> some View {
-    List {
+    ScrollView {
       sectionContent(for: section)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(24)
     }
     .navigationTitle(section.title)
-    #if os(iOS)
-      .listStyle(.plain)
-    #endif
   }
 
   @ViewBuilder
@@ -63,46 +62,51 @@ struct ContentView: View {
     }
   }
 
-  @ViewBuilder
   private func identifiersRows() -> some View {
-    ValueRow(title: "XID", value: xid)
-    ValueRow(title: "Random Hex", value: randomHex)
+    VStack(alignment: .leading, spacing: 12) {
+      ValueRow(title: "XID", value: xid)
+      ValueRow(title: "Random Hex", value: randomHex)
+    }
   }
 
-  @ViewBuilder
   private func timeRows() -> some View {
-    ValueRow(title: "Relative", value: relativeTime)
+    VStack(alignment: .leading, spacing: 12) {
+      ValueRow(title: "Relative", value: relativeTime)
+    }
   }
 
-  @ViewBuilder
   private func colorRows() -> some View {
-    HStack(spacing: 12) {
-      RoundedRectangle(cornerRadius: 10)
-        .fill(color)
-        .frame(width: 44, height: 44)
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.secondary.opacity(0.3)))
-      ValueRow(title: "Hex", value: color.hex())
-    }
-    Button("Randomize Color") {
-      color = .random()
-      RCKit.log.info("Randomized color", metadata: ["hex": color.hex()])
+    VStack(alignment: .leading, spacing: 12) {
+      HStack(spacing: 12) {
+        RoundedRectangle(cornerRadius: 10)
+          .fill(color)
+          .frame(width: 44, height: 44)
+          .overlay(RoundedRectangle(cornerRadius: 10).stroke(.secondary.opacity(0.3)))
+        ValueRow(title: "Hex", value: color.hex())
+      }
+      Button("Randomize Color") {
+        color = .random()
+        RCKit.log.info("Randomized color", metadata: ["hex": color.hex()])
+      }
     }
   }
 
-  @ViewBuilder
   private func systemRows() -> some View {
-    ValueRow(title: "Memory", value: memory)
-    ValueRow(title: "Bundle", value: BuildConfig.Bundle.identifier)
-    ValueRow(title: "Channel", value: BuildConfig.channelName)
+    VStack(alignment: .leading, spacing: 12) {
+      ValueRow(title: "Memory", value: memory)
+      ValueRow(title: "Bundle", value: BuildConfig.Bundle.identifier)
+      ValueRow(title: "Channel", value: BuildConfig.channelName)
+    }
   }
 
-  @ViewBuilder
   private func actionRows() -> some View {
-    Button("Refresh Demo Values") {
-      refresh()
-    }
-    Button("Log Debug Info") {
-      RCKit.log.printDebugInfo()
+    VStack(alignment: .leading, spacing: 12) {
+      Button("Refresh Demo Values") {
+        refresh()
+      }
+      Button("Log Debug Info") {
+        RCKit.log.printDebugInfo()
+      }
     }
   }
 
