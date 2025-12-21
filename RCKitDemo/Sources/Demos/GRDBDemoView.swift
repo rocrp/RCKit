@@ -160,6 +160,7 @@ struct GRDBDemoView: View {
         }
     }
 
+    @MainActor
     private func startObservation() {
         let observation = ValueObservation.tracking { db -> ([DemoNote], Int) in
             let notes =
@@ -171,11 +172,10 @@ struct GRDBDemoView: View {
         }
 
         observationCancellable = observation.start(
-            in: database.reader,
-            scheduling: .async(onQueue: .main)
+            in: database.reader
         ) { error in
             preconditionFailure("Database observation failed: \(error)")
-        } onChange: { (fetchedNotes, count) in
+        } onChange: { @MainActor (fetchedNotes, count) in
             notes = fetchedNotes
             notesCount = count
         }
