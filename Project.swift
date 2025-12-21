@@ -2,11 +2,19 @@ import ProjectDescription
 
 let settings = Settings.settings(
     base: [
-        "SWIFT_VERSION": "5.9"
+        "SWIFT_VERSION": "5.9",
+        "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
     ]
 )
 
-let macOSDeploymentTarget = "13.0"
+let frameworkSettings = Settings.settings(
+    base: [
+        "SWIFT_VERSION": "5.9",
+        "ENABLE_MODULE_VERIFIER": "YES",
+    ]
+)
+
+let macOSDeploymentTarget = "15.0"
 let iOSDeploymentTarget = "18.0"
 
 let project = Project(
@@ -30,7 +38,8 @@ let project = Project(
                     path: "Dependencies/NSLoggerSwift.xcframework",
                     condition: .when([.ios])
                 )
-            ]
+            ],
+            settings: frameworkSettings
         ),
         .target(
             name: "RCKitDemo",
