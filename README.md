@@ -1,6 +1,6 @@
 # RCKit
 
-RoCry's Personal Swift 6 + SwiftUI helpers for iOS and macOS personal projects. Tuist-first. 
+RoCry's personal Swift 6.2 + SwiftUI helpers for iOS/macOS projects. Tuist-first.
 
 ## Targets
 - `RCKit` framework
