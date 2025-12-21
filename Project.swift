@@ -1,16 +1,29 @@
 import ProjectDescription
 
-let settings = Settings.settings(
+// Framework settings (nonisolated by default - appropriate for libraries)
+let frameworkSettings = Settings.settings(
     base: [
         "SWIFT_VERSION": "6.2",
+        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+        "ENABLE_MODULE_VERIFIER": "YES",
+    ]
+)
+
+// App settings (MainActor by default for UI code)
+let appSettings = Settings.settings(
+    base: [
+        "SWIFT_VERSION": "6.2",
+        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+        "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
         "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
     ]
 )
 
-let frameworkSettings = Settings.settings(
+// Test settings
+let testSettings = Settings.settings(
     base: [
         "SWIFT_VERSION": "6.2",
-        "ENABLE_MODULE_VERIFIER": "YES",
+        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
     ]
 )
 
@@ -23,7 +36,6 @@ let project = Project(
     packages: [
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0")
     ],
-    settings: settings,
     targets: [
         .target(
             name: "RCKit",
@@ -74,7 +86,8 @@ let project = Project(
                     path: "Dependencies/NSLoggerSwift.xcframework",
                     condition: .when([.ios])
                 ),
-            ]
+            ],
+            settings: appSettings
         ),
         .target(
             name: "RCKitTests",
@@ -84,7 +97,8 @@ let project = Project(
             deploymentTargets: .iOS(iOSDeploymentTarget),
             infoPlist: .default,
             buildableFolders: ["RCKit/Tests"],
-            dependencies: [.target(name: "RCKit")]
+            dependencies: [.target(name: "RCKit")],
+            settings: testSettings
         ),
         .target(
             name: "RCKitDemoTests",
@@ -101,7 +115,8 @@ let project = Project(
                     path: "Dependencies/MMKV.xcframework",
                     condition: .when([.ios])
                 ),
-            ]
+            ],
+            settings: testSettings
         ),
     ],
     schemes: [

@@ -4,13 +4,12 @@ import SwiftUI
 
 // MARK: - Model
 
-struct DemoNote: Equatable {
+/// Data model for GRDB - nonisolated since it's a plain value type for database operations
+nonisolated struct DemoNote: Equatable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
     var id: Int64?
     var title: String
     var createdAtUTC: String
-}
 
-extension DemoNote: Codable, FetchableRecord, MutablePersistableRecord {
     static let databaseTableName = "demo_notes"
 
     enum Columns {
@@ -25,7 +24,8 @@ extension DemoNote: Codable, FetchableRecord, MutablePersistableRecord {
 
 // MARK: - Database
 
-struct DemoDatabase {
+/// Database wrapper - nonisolated for database operations
+nonisolated struct DemoDatabase: Sendable {
     private let dbWriter: any DatabaseWriter
 
     init(_ dbWriter: any DatabaseWriter) throws {
