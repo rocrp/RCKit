@@ -1,5 +1,5 @@
+import GRDB
 import RCKit
-import SQLiteData
 import SwiftUI
 
 #if canImport(MMKV)
@@ -10,7 +10,7 @@ import SwiftUI
 struct RCKitDemoApp: App {
     init() {
         configureLogging()
-        configureSQLiteData()
+        configureGRDB()
         configureMMKV()
     }
 
@@ -33,16 +33,11 @@ struct RCKitDemoApp: App {
         #endif
     }
 
-    private func configureSQLiteData() {
-        do {
-            try prepareDependencies { values in
-                values.defaultDatabase = try SQLiteDataDemoDatabase.makeDatabase()
-            }
-            if let databasePath = SQLiteDataDemoDatabase.databasePath {
-                RCKit.log.info("SQLiteData ready", metadata: ["path": databasePath])
-            }
-        } catch {
-            preconditionFailure("SQLiteData setup failed: \(error)")
+    private func configureGRDB() {
+        // Access shared instance to trigger initialization and migration
+        _ = DemoDatabase.shared
+        if let databasePath = DemoDatabase.databasePath {
+            RCKit.log.info("GRDB ready", metadata: ["path": databasePath])
         }
     }
 

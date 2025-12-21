@@ -3,11 +3,9 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var xid: String = ""
-    @State private var utcNow: String = ""
     @State private var memory: String = ""
     @State private var randomHex: String = ""
     @State private var color: Color = .random()
-    @State private var relativeTime: String = ""
 
     var body: some View {
         NavigationSplitView {
@@ -50,16 +48,12 @@ struct ContentView: View {
         switch section {
         case .identifiers:
             identifiersRows()
-        case .time:
-            timeRows()
         case .color:
             colorRows()
         case .system:
             systemRows()
-        case .dependencies:
-            DependenciesDemoView()
-        case .sqliteData:
-            SQLiteDataDemoView()
+        case .grdb:
+            GRDBDemoView()
         case .mmkv:
             MMKVDemoView()
         case .actions:
@@ -71,12 +65,6 @@ struct ContentView: View {
     private func identifiersRows() -> some View {
         ValueRow(title: "XID", value: xid)
         ValueRow(title: "Random Hex", value: randomHex)
-    }
-
-    @ViewBuilder
-    private func timeRows() -> some View {
-        ValueRow(title: "UTC Now", value: utcNow)
-        ValueRow(title: "Relative", value: relativeTime)
     }
 
     @ViewBuilder
@@ -114,8 +102,6 @@ struct ContentView: View {
     private func refresh() {
         xid = generateXID()
         randomHex = String.randomHex(size: 16)
-        relativeTime = Date().addingTimeInterval(-3_600).relativeShortString()
-        utcNow = UTCDateFormatter.iso8601String(from: Date())
         memory = loadMemory()
     }
 
@@ -138,11 +124,9 @@ struct ContentView: View {
 
 private enum DemoSection: String, CaseIterable, Identifiable {
     case identifiers
-    case time
     case color
     case system
-    case dependencies
-    case sqliteData
+    case grdb
     case mmkv
     case actions
 
@@ -151,11 +135,9 @@ private enum DemoSection: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .identifiers: return "Identifiers"
-        case .time: return "Time"
         case .color: return "Color"
         case .system: return "System"
-        case .dependencies: return "Dependencies"
-        case .sqliteData: return "SQLiteData"
+        case .grdb: return "GRDB"
         case .mmkv: return "MMKV"
         case .actions: return "Actions"
         }

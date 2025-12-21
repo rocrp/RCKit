@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.9
 import PackageDescription
 
 #if TUIST
@@ -12,7 +12,6 @@ import PackageDescription
 let package = Package(
     name: "RCKit",
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/sqlite-data", from: "1.4.1"),
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.10.0"),
+        .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0")
     ]
 )

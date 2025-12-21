@@ -2,7 +2,7 @@ import ProjectDescription
 
 let settings = Settings.settings(
     base: [
-        "SWIFT_VERSION": "6.0"
+        "SWIFT_VERSION": "5.9"
     ]
 )
 
@@ -13,8 +13,7 @@ let project = Project(
     name: "RCKit",
     options: .options(automaticSchemesOptions: .disabled),
     packages: [
-        .package(url: "https://github.com/pointfreeco/sqlite-data", from: "1.4.1"),
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.10.0"),
+        .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0")
     ],
     settings: settings,
     targets: [
@@ -58,8 +57,7 @@ let project = Project(
             resources: ["RCKitDemo/Resources/**"],
             dependencies: [
                 .target(name: "RCKit"),
-                .package(product: "Dependencies"),
-                .package(product: "SQLiteData"),
+                .package(product: "GRDB"),
                 .xcframework(
                     path: "Dependencies/MMKV.xcframework",
                     condition: .when([.ios, .macos])
@@ -90,7 +88,7 @@ let project = Project(
             sources: ["RCKitDemo/Tests/**"],
             dependencies: [
                 .target(name: "RCKitDemo"),
-                .package(product: "SQLiteData"),
+                .package(product: "GRDB"),
                 .xcframework(
                     path: "Dependencies/MMKV.xcframework",
                     condition: .when([.ios])
