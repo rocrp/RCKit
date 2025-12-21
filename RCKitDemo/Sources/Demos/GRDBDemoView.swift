@@ -120,7 +120,9 @@ struct GRDBDemoView: View {
 
         Section("Insert") {
             TextField("Note title", text: $newTitle)
-                .textInputAutocapitalization(.sentences)
+                #if os(iOS)
+                    .textInputAutocapitalization(.sentences)
+                #endif
             Button("Insert Note") {
                 insertNote()
             }

@@ -17,7 +17,9 @@ struct MMKVDemoView: View {
         var body: some View {
             Section("Write") {
                 TextField("Name", text: $inputName)
-                    .textInputAutocapitalization(.words)
+                    #if os(iOS)
+                        .textInputAutocapitalization(.words)
+                    #endif
                 Toggle("Enabled", isOn: $inputEnabled)
                 Button("Save to MMKV") {
                     save()
