@@ -10,8 +10,8 @@ import XCTest
 @testable import RCKit
 
 final class TimeIntervalTests: XCTestCase {
-  func testBasic() throws {
-    XCTAssertEqual(TimeInterval(10).shortString, "10s")
-    XCTAssertEqual(TimeInterval(3601).shortString, "1h")
-  }
+    func testBasic() throws {
+        XCTAssertEqual(TimeInterval(10).shortString, "10s")
+        XCTAssertEqual(TimeInterval(3601).shortString, "1h")
+    }
 }

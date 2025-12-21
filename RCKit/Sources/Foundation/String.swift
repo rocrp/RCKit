@@ -8,14 +8,14 @@
 import Foundation
 
 extension String {
-  public func url() -> URL {
-    guard let url = URL(string: self) else {
-      preconditionFailure("Invalid URL string: \(self)")
+    public func url() -> URL {
+        guard let url = URL(string: self) else {
+            preconditionFailure("Invalid URL string: \(self)")
+        }
+        return url
     }
-    return url
-  }
 
-  public func removingCharacters(in set: CharacterSet) -> String {
-    return components(separatedBy: set).joined()
-  }
+    public func removingCharacters(in set: CharacterSet) -> String {
+        return components(separatedBy: set).joined()
+    }
 }
