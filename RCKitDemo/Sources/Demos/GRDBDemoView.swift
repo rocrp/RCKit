@@ -25,7 +25,7 @@ extension DemoNote: Codable, FetchableRecord, MutablePersistableRecord {
 
 // MARK: - Database
 
-struct DemoDatabase: Sendable {
+struct DemoDatabase {
     private let dbWriter: any DatabaseWriter
 
     init(_ dbWriter: any DatabaseWriter) throws {
@@ -172,7 +172,7 @@ struct GRDBDemoView: View {
 
         observationCancellable = observation.start(
             in: database.reader,
-            scheduling: .immediate
+            scheduling: .async(onQueue: .main)
         ) { error in
             preconditionFailure("Database observation failed: \(error)")
         } onChange: { (fetchedNotes, count) in

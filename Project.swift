@@ -2,14 +2,14 @@ import ProjectDescription
 
 let settings = Settings.settings(
     base: [
-        "SWIFT_VERSION": "5.9",
+        "SWIFT_VERSION": "6.2",
         "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
     ]
 )
 
 let frameworkSettings = Settings.settings(
     base: [
-        "SWIFT_VERSION": "5.9",
+        "SWIFT_VERSION": "6.2",
         "ENABLE_MODULE_VERIFIER": "YES",
     ]
 )
