@@ -32,7 +32,7 @@ let project = Project(
             bundleId: "dev.rocry.RCKit",
             deploymentTargets: .multiplatform(iOS: iOSDeploymentTarget, macOS: macOSDeploymentTarget),
             infoPlist: .default,
-            sources: ["RCKit/Sources/**"],
+            buildableFolders: ["RCKit/Sources"],
             dependencies: [
                 .xcframework(
                     path: "Dependencies/NSLoggerSwift.xcframework",
@@ -62,8 +62,7 @@ let project = Project(
                     "NSLocalNetworkUsageDescription": "Access to the local network for development builds",
                 ]
             ),
-            sources: ["RCKitDemo/Sources/**"],
-            resources: ["RCKitDemo/Resources/**"],
+            buildableFolders: ["RCKitDemo/Sources", "RCKitDemo/Resources"],
             dependencies: [
                 .target(name: "RCKit"),
                 .package(product: "GRDB"),
@@ -84,7 +83,7 @@ let project = Project(
             bundleId: "dev.rocry.RCKitTests",
             deploymentTargets: .iOS(iOSDeploymentTarget),
             infoPlist: .default,
-            sources: ["RCKit/Tests/**"],
+            buildableFolders: ["RCKit/Tests"],
             dependencies: [.target(name: "RCKit")]
         ),
         .target(
@@ -94,7 +93,7 @@ let project = Project(
             bundleId: "dev.rocry.RCKitDemoTests",
             deploymentTargets: .iOS(iOSDeploymentTarget),
             infoPlist: .default,
-            sources: ["RCKitDemo/Tests/**"],
+            buildableFolders: ["RCKitDemo/Tests"],
             dependencies: [
                 .target(name: "RCKitDemo"),
                 .package(product: "GRDB"),
