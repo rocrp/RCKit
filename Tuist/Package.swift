@@ -10,7 +10,7 @@ import PackageDescription
 #endif
 
 let package = Package(
-    name: "RCKit",
+    name: "RCKitDemo",
     dependencies: [
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0")
     ]

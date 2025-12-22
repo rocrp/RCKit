@@ -1,14 +1,5 @@
 import ProjectDescription
 
-// Framework settings
-let frameworkSettings = Settings.settings(
-    base: [
-        "SWIFT_VERSION": "6.2",
-        "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
-        "ENABLE_MODULE_VERIFIER": "YES",
-    ]
-)
-
 // App settings
 let appSettings = Settings.settings(
     base: [
@@ -30,28 +21,13 @@ let macOSDeploymentTarget = "15.0"
 let iOSDeploymentTarget = "18.0"
 
 let project = Project(
-    name: "RCKit",
+    name: "RCKitDemo",
     options: .options(automaticSchemesOptions: .disabled),
     packages: [
-        .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0")
+        .local(path: "."),
+        .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0"),
     ],
     targets: [
-        .target(
-            name: "RCKit",
-            destinations: [.iPhone, .iPad, .mac],
-            product: .framework,
-            bundleId: "dev.rocry.RCKit",
-            deploymentTargets: .multiplatform(iOS: iOSDeploymentTarget, macOS: macOSDeploymentTarget),
-            infoPlist: .default,
-            buildableFolders: ["RCKit/Sources"],
-            dependencies: [
-                .xcframework(
-                    path: "Dependencies/NSLoggerSwift.xcframework",
-                    condition: .when([.ios])
-                )
-            ],
-            settings: frameworkSettings
-        ),
         .target(
             name: "RCKitDemo",
             destinations: [.iPhone, .iPad, .mac],
@@ -75,7 +51,7 @@ let project = Project(
             ),
             buildableFolders: ["RCKitDemo/Sources", "RCKitDemo/Resources"],
             dependencies: [
-                .target(name: "RCKit"),
+                .package(product: "RCKit"),
                 .package(product: "GRDB"),
                 .xcframework(
                     path: "Dependencies/MMKV.xcframework",
@@ -87,17 +63,6 @@ let project = Project(
                 ),
             ],
             settings: appSettings
-        ),
-        .target(
-            name: "RCKitTests",
-            destinations: .iOS,
-            product: .unitTests,
-            bundleId: "dev.rocry.RCKitTests",
-            deploymentTargets: .iOS(iOSDeploymentTarget),
-            infoPlist: .default,
-            buildableFolders: ["RCKit/Tests"],
-            dependencies: [.target(name: "RCKit")],
-            settings: testSettings
         ),
         .target(
             name: "RCKitDemoTests",
@@ -120,11 +85,6 @@ let project = Project(
     ],
     schemes: [
         .scheme(
-            name: "RCKit",
-            shared: true,
-            buildAction: .buildAction(targets: [.target("RCKit")])
-        ),
-        .scheme(
             name: "RCKitDemo",
             shared: true,
             buildAction: .buildAction(targets: [.target("RCKitDemo")]),
@@ -133,17 +93,6 @@ let project = Project(
                 executable: .target("RCKitDemo"),
                 expandVariableFromTarget: .target("RCKitDemo")
             )
-        ),
-        .scheme(
-            name: "RCKitTests",
-            shared: true,
-            buildAction: .buildAction(targets: [
-                .target("RCKit"),
-                .target("RCKitTests"),
-            ]),
-            testAction: .targets([
-                .testableTarget(target: .target("RCKitTests"))
-            ])
         ),
         .scheme(
             name: "RCKitDemoTests",

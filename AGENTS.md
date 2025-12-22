@@ -1,22 +1,29 @@
 # RCKit
 
-Swift 6.2 + SwiftUI helpers. Tuist-first project.
+Swift 6.2 + SwiftUI helpers. Pure SPM package with Tuist demo app.
 
 ## Build & Test
 
 ```bash
-make build    # Generate project + build iOS/macOS
-make test     # Run unit tests
-make format   # Format code
-make lint     # Lint code
-make all      # format + lint + test
+# RCKit library (SPM)
+swift build       # Build library
+swift test        # Run library tests
+make build-spm    # Same as swift build
+make test-spm     # Same as swift test
+
+# Demo app (Tuist)
+make build        # Generate + build demo for macOS/iOS
+make test         # Run demo tests
+make format       # Format code
+make lint         # Lint code
+make all          # format + lint + test-spm + test
 ```
 
 Or manually:
 ```bash
 tuist generate --no-open
-xcodebuild -workspace RCKit.xcworkspace -scheme RCKitDemo -destination 'platform=macOS' build
-xcodebuild -workspace RCKit.xcworkspace -scheme RCKitDemo -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
+xcodebuild -workspace RCKitDemo.xcworkspace -scheme RCKitDemo -destination 'platform=macOS' build
+xcodebuild -workspace RCKitDemo.xcworkspace -scheme RCKitDemo -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 ```
 
 ## Swift 6.2 Concurrency

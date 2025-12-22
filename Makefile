@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: format lint test build all
+.PHONY: format lint test test-spm build build-spm all
 
 format:
 	./Scripts/format.sh
@@ -8,12 +8,18 @@ format:
 lint:
 	./Scripts/lint.sh
 
+test-spm:
+	swift test
+
 test:
-	tuist test RCKitTests --no-selective-testing
+	tuist test RCKitDemoTests --no-selective-testing
+
+build-spm:
+	swift build
 
 build:
 	tuist generate --no-open
-	xcodebuild -workspace RCKit.xcworkspace -scheme RCKitDemo -destination 'platform=macOS' build
-	xcodebuild -workspace RCKit.xcworkspace -scheme RCKitDemo -destination 'generic/platform=iOS Simulator' build
+	xcodebuild -workspace RCKitDemo.xcworkspace -scheme RCKitDemo -destination 'platform=macOS' build
+	xcodebuild -workspace RCKitDemo.xcworkspace -scheme RCKitDemo -destination 'generic/platform=iOS Simulator' build
 
-all: format lint test
+all: format lint test-spm test

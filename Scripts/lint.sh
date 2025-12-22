@@ -7,8 +7,11 @@ fd -0 -e swift \
   -E Derived \
   -E .build \
   -E .git \
+  -E .swiftpm \
   -E Tuist/.build \
   -E RCKit.xcodeproj \
   -E RCKit.xcworkspace \
+  -E RCKitDemo.xcodeproj \
+  -E RCKitDemo.xcworkspace \
   . "$ROOT_DIR" \
   | xargs -0 swift format lint --configuration "$ROOT_DIR/.swift-format"
