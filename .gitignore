@@ -69,6 +69,11 @@ Derived/
 ### Tuist managed dependencies ###
 Tuist/.build
 
+### SPM ###
+.build/
+.swiftpm/
+Package.resolved
+
 
 
 .specstory/
