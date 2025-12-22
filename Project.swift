@@ -1,6 +1,6 @@
 import ProjectDescription
 
-// Framework settings (nonisolated by default - appropriate for libraries)
+// Framework settings
 let frameworkSettings = Settings.settings(
     base: [
         "SWIFT_VERSION": "6.2",
@@ -9,7 +9,7 @@ let frameworkSettings = Settings.settings(
     ]
 )
 
-// App settings (nonisolated by default - explicit @MainActor where needed)
+// App settings
 let appSettings = Settings.settings(
     base: [
         "SWIFT_VERSION": "6.2",

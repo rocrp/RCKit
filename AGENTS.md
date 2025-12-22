@@ -21,7 +21,7 @@ xcodebuild -workspace RCKit.xcworkspace -scheme RCKitDemo -destination 'platform
 
 ## Swift 6.2 Concurrency
 
-- All targets use `nonisolated` default (no `SWIFT_DEFAULT_ACTOR_ISOLATION`)
-- `SWIFT_APPROACHABLE_CONCURRENCY = YES` enabled
+- `SWIFT_APPROACHABLE_CONCURRENCY = YES` (SE-0461: nonisolated async inherits caller's actor)
 - Mark `@Observable` classes with `@MainActor`
 - Mark UI-bound code explicitly with `@MainActor`
+- Use `@concurrent` to force async off caller's actor when parallel execution needed

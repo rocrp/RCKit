@@ -4,8 +4,7 @@ import SwiftUI
 
 // MARK: - Model
 
-/// Data model for GRDB - nonisolated since it's a plain value type for database operations
-nonisolated struct DemoNote: Equatable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
+struct DemoNote: Equatable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
     var id: Int64?
     var title: String
     var createdAtUTC: String
@@ -24,8 +23,7 @@ nonisolated struct DemoNote: Equatable, Codable, FetchableRecord, MutablePersist
 
 // MARK: - Database
 
-/// Database wrapper - nonisolated for database operations
-nonisolated struct DemoDatabase: Sendable {
+struct DemoDatabase: Sendable {
     private let dbWriter: any DatabaseWriter
 
     init(_ dbWriter: any DatabaseWriter) throws {
