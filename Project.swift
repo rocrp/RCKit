@@ -9,12 +9,11 @@ let frameworkSettings = Settings.settings(
     ]
 )
 
-// App settings (MainActor by default for UI code)
+// App settings (nonisolated by default - explicit @MainActor where needed)
 let appSettings = Settings.settings(
     base: [
         "SWIFT_VERSION": "6.2",
         "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
-        "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
         "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
     ]
 )
