@@ -19,8 +19,15 @@ let package = Package(
         .library(name: "RCKit", targets: ["RCKit"])
     ],
     targets: [
+        .binaryTarget(
+            name: "NSLoggerSwift",
+            path: "Dependencies/NSLoggerSwift.xcframework"
+        ),
         .target(
             name: "RCKit",
+            dependencies: [
+                .target(name: "NSLoggerSwift", condition: .when(platforms: [.iOS]))
+            ],
             path: "RCKit/Sources",
             swiftSettings: [
                 .enableExperimentalFeature("ApproachableConcurrency")
