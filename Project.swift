@@ -1,3 +1,6 @@
+// Tuist manifest for development. SPM consumers use Package.swift.
+// Keep both in sync when modifying RCKit target settings.
+
 import ProjectDescription
 
 // Framework settings
