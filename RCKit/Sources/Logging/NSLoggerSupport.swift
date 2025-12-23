@@ -14,6 +14,13 @@
             | UInt32(kLoggerOption_UseSSL)
             | UInt32(kLoggerOption_CaptureSystemConsole)
 
+        public static let remoteOnlyOptions: UInt32 =
+            UInt32(kLoggerOption_BufferLogsUntilConnection)
+            | UInt32(kLoggerOption_BrowseBonjour)
+            | UInt32(kLoggerOption_BrowsePeerToPeer)
+            | UInt32(kLoggerOption_BrowseOnlyLocalDomain)
+            | UInt32(kLoggerOption_UseSSL)
+
         public static func start(
             options: UInt32 = defaultOptions,
             useBonjourForBuildUser: Bool = false

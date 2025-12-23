@@ -6,25 +6,23 @@
     import NSLoggerSwift
 
     extension RCKitLog.Level {
-        var nsloggerLevel: NSLoggerSwift.Logger.Level {
+        var nsloggerLevel: Int32 {
             switch self {
-            case .debug: return .debug
-            case .info: return .info
-            case .notice: return .important
-            case .warning: return .warning
-            case .error: return .error
-            case .fault: return .error
+            case .debug: return 3
+            case .info: return 2
+            case .notice: return 1
+            case .warning: return 1
+            case .error: return 0
+            case .fault: return 0
             }
         }
     }
 
     struct NSLoggerSink: LogSink {
-        private let logger: NSLoggerSwift.Logger
-        private let domain: NSLoggerSwift.Logger.Domain
+        private let domain: String
 
         init(domain: String) {
-            self.logger = NSLoggerSwift.Logger.shared
-            self.domain = NSLoggerSwift.Logger.Domain(rawValue: domain)
+            self.domain = domain
         }
 
         func send(
@@ -34,7 +32,22 @@
             line: UInt,
             function: String
         ) {
-            logger.log(domain, level.nsloggerLevel, message, file, Int(line), function)
+            let logger = LoggerGetDefaultLogger()
+            let safeLine = line > UInt(Int32.max) ? UInt(Int32.max) : line
+            let lineNumber = Int32(safeLine)
+            file.withCString { fileCString in
+                function.withCString { functionCString in
+                    LogMessageRawToF(
+                        logger,
+                        fileCString,
+                        lineNumber,
+                        functionCString,
+                        domain,
+                        level.nsloggerLevel,
+                        message
+                    )
+                }
+            }
         }
     }
 #endif
