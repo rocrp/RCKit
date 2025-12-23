@@ -33,7 +33,7 @@
             function: String
         ) {
             let logger = LoggerGetDefaultLogger()
-            let safeLine = line > UInt(Int32.max) ? UInt(Int32.max) : line
+            let safeLine = min(line, UInt(Int32.max))
             let lineNumber = Int32(safeLine)
             file.withCString { fileCString in
                 function.withCString { functionCString in
