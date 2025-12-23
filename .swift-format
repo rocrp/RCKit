@@ -8,7 +8,7 @@
     "respectsExistingLineBreaks": true,
     "lineBreakBeforeEachArgument": true,
     "multiElementCollectionTrailingCommas": true,
-    "spacesAroundRangeFormationOperators": true,
+    "spacesAroundRangeFormationOperators": false,
     "rules": {
         "AlwaysUseLowerCamelCase": false
     }
