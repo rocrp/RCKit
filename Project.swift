@@ -1,5 +1,4 @@
-// Tuist manifest for development. SPM consumers use Package.swift.
-// Keep both in sync when modifying RCKit target settings.
+// Tuist manifest for development.
 
 import ProjectDescription
 
@@ -93,10 +92,10 @@ let project = Project(
         ),
         .target(
             name: "RCKitTests",
-            destinations: .iOS,
+            destinations: [.iPhone, .iPad, .mac],
             product: .unitTests,
             bundleId: "dev.rocry.RCKitTests",
-            deploymentTargets: .iOS(iOSDeploymentTarget),
+            deploymentTargets: .multiplatform(iOS: iOSDeploymentTarget, macOS: macOSDeploymentTarget),
             infoPlist: .default,
             buildableFolders: ["RCKit/Tests"],
             dependencies: [.target(name: "RCKit")],
@@ -104,10 +103,10 @@ let project = Project(
         ),
         .target(
             name: "RCKitDemoTests",
-            destinations: .iOS,
+            destinations: [.iPhone, .iPad, .mac],
             product: .unitTests,
             bundleId: "dev.rocry.RCKitDemoTests",
-            deploymentTargets: .iOS(iOSDeploymentTarget),
+            deploymentTargets: .multiplatform(iOS: iOSDeploymentTarget, macOS: macOSDeploymentTarget),
             infoPlist: .default,
             buildableFolders: ["RCKitDemo/Tests"],
             dependencies: [
@@ -115,7 +114,7 @@ let project = Project(
                 .package(product: "GRDB"),
                 .xcframework(
                     path: "Dependencies/MMKV.xcframework",
-                    condition: .when([.ios])
+                    condition: .when([.ios, .macos])
                 ),
             ],
             settings: testSettings

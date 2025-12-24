@@ -1,12 +1,12 @@
 # RCKit
 
-Swift 6.2 + SwiftUI helpers. Tuist-first project.
+Swift 6.2 + SwiftUI helpers. Tuist-managed project (iOS + macOS).
 
 ## Build & Test
 
 ```bash
 make build    # Generate project + build iOS/macOS
-make test     # Run unit tests
+make test     # Run unit tests (macOS)
 make format   # Format code
 make lint     # Lint code
 make all      # format + lint + test
@@ -15,6 +15,7 @@ make all      # format + lint + test
 Or manually:
 ```bash
 tuist generate --no-open
+tuist test RCKitTests --platform macOS
 xcodebuild -workspace RCKit.xcworkspace -scheme RCKitDemo -destination 'platform=macOS' build
 xcodebuild -workspace RCKit.xcworkspace -scheme RCKitDemo -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 ```

@@ -9,7 +9,7 @@ lint:
 	./Scripts/lint.sh
 
 test:
-	tuist test RCKitTests --no-selective-testing
+	tuist test RCKitTests --no-selective-testing --platform macOS
 
 build:
 	tuist generate --no-open
