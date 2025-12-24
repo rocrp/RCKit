@@ -108,7 +108,7 @@ extension FixedWidthInteger {
 
 private final class CounterBox: @unchecked Sendable {
     private let lock = NSLock()
-    private var value: UInt32 = UInt32.random(in: 0 ... UInt32.max)
+    private var value: UInt32 = UInt32.random(in: 0...UInt32.max)
 
     func next() -> UInt32 {
         lock.lock()

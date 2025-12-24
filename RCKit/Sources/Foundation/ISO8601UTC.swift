@@ -39,7 +39,8 @@ public enum ISO8601UTC {
 
     private static func makeFormatter(includeFractionalSeconds: Bool) -> ISO8601DateFormatter {
         let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = includeFractionalSeconds
+        formatter.formatOptions =
+            includeFractionalSeconds
             ? [.withInternetDateTime, .withFractionalSeconds]
             : [.withInternetDateTime]
         formatter.timeZone = TimeZone(secondsFromGMT: 0)

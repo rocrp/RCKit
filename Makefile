@@ -2,11 +2,13 @@ SHELL := /bin/bash
 
 .PHONY: format lint test build all
 
+SWIFT_FILES = fd -0 -e swift -E Derived -E .build -E .git -E Tuist/.build -E RCKit.xcodeproj -E RCKit.xcworkspace .
+
 format:
-	./Scripts/format.sh
+	$(SWIFT_FILES) | xargs -0 swift format --in-place --configuration .swift-format
 
 lint:
-	./Scripts/lint.sh
+	$(SWIFT_FILES) | xargs -0 swift format lint --configuration .swift-format
 
 test:
 	tuist test RCKitTests --no-selective-testing --platform macOS

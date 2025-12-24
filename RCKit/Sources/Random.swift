@@ -36,21 +36,21 @@ extension Bool: Randomable {
 extension Int: Randomable {
     public static func random(size: Int) -> Self {
         precondition(size > 0, "Int.random(size:) size must be > 0")
-        return Int.random(in: 0 ..< size)
+        return Int.random(in: 0..<size)
     }
 }
 
 extension Double: Randomable {
     public static func random(size: Int) -> Self {
         precondition(size > 0, "Double.random(size:) size must be > 0")
-        return Double.random(in: 0 ..< Double(size))
+        return Double.random(in: 0..<Double(size))
     }
 }
 
 extension Float: Randomable {
     public static func random(size: Int) -> Self {
         precondition(size > 0, "Float.random(size:) size must be > 0")
-        return Float.random(in: 0 ..< Float(size))
+        return Float.random(in: 0..<Float(size))
     }
 }
 
@@ -94,13 +94,13 @@ extension Character: Randomable {
 extension String: Randomable {
     public static func random(size: Int) -> Self {
         precondition(size >= 0, "String.random(size:) size must be >= 0")
-        return String((0 ..< size).map { _ in Character.random() })
+        return String((0..<size).map { _ in Character.random() })
     }
 
     /// Generate a random string from a specific set of characters
     public static func random(size: Int, from characterSet: String) -> Self {
         precondition(size >= 0, "String.random(size:from:) size must be >= 0")
-        return String((0 ..< size).map { _ in Character.random(from: characterSet) })
+        return String((0..<size).map { _ in Character.random(from: characterSet) })
     }
 
     /// Generate a random alphanumeric string
@@ -130,7 +130,7 @@ extension String: Randomable {
 extension Array: Randomable where Element: Randomable {
     public static func random(size: Int) -> Self {
         precondition(size >= 0, "Array.random(size:) size must be >= 0")
-        return (0 ..< size).map { _ in Element.random() }
+        return (0..<size).map { _ in Element.random() }
     }
 
     /// Select a specified number of random elements from the array
@@ -145,8 +145,8 @@ extension Array: Randomable where Element: Randomable {
         var array = self
         var result: [Element] = []
 
-        for _ in 0 ..< count {
-            let randomIndex = Int.random(in: 0 ..< array.count)
+        for _ in 0..<count {
+            let randomIndex = Int.random(in: 0..<array.count)
             result.append(array[randomIndex])
             array.remove(at: randomIndex)
         }

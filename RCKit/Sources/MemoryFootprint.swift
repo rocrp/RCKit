@@ -109,11 +109,11 @@ extension UInt64 {
         let bytes = Double(self)
 
         switch bytes {
-        case 0 ..< 1024:
+        case 0..<1024:
             return String(format: "%.0f bytes", bytes)
-        case 1024 ..< (1024 * 1024):
+        case 1024..<(1024 * 1024):
             return String(format: "%.1f KB", bytes / 1024)
-        case 1024 ..< (1024 * 1024 * 1024):
+        case 1024..<(1024 * 1024 * 1024):
             return String(format: "%.1f MB", bytes / (1024 * 1024))
         default:
             return String(format: "%.2f GB", bytes / (1024 * 1024 * 1024))

@@ -15,15 +15,15 @@ extension TimeInterval {
         let sign = isNegative ? "-" : ""
 
         switch interval {
-        case 0 ..< 60:
+        case 0..<60:
             return "\(sign)\(Int(interval))s"
-        case 60 ..< 3600:
+        case 60..<3600:
             return "\(sign)\(Int(interval / 60))m"
-        case 3600 ..< 3600 * 24:
+        case 3600..<3600 * 24:
             return "\(sign)\(Int(interval / 3600))h"
-        case 3600 * 24 ..< 3600 * 24 * 30:
+        case 3600 * 24..<3600 * 24 * 30:
             return "\(sign)\(Int(interval / 86400))d"
-        case 3600 * 24 * 30 ..< 3600 * 24 * 365:
+        case 3600 * 24 * 30..<3600 * 24 * 365:
             return "\(sign)\(Int(interval / 2_592_000))mo"
         default:
             return "\(sign)\(Int(interval / 31_536_000))y"

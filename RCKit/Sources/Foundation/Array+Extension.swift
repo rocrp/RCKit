@@ -61,7 +61,7 @@ extension Array {
         precondition(size > 0, "Array.chunked(into:) size must be > 0")
         guard !isEmpty else { return [] }
         return stride(from: 0, to: count, by: size).map {
-            Array(self[$0 ..< Swift.min($0 + size, count)])
+            Array(self[$0..<Swift.min($0 + size, count)])
         }
     }
 
@@ -99,7 +99,7 @@ extension Array {
         } else if n <= 0 {
             return []
         }
-        return Array(self[0 ..< n])
+        return Array(self[0..<n])
     }
 
     /// Returns a new array containing the last `n` elements.
@@ -113,7 +113,7 @@ extension Array {
         } else if n <= 0 {
             return []
         }
-        return Array(self[(count - n) ..< count])
+        return Array(self[(count - n)..<count])
     }
 
     /// Finds the index of an element in the array using binary search.

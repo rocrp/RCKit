@@ -28,7 +28,7 @@ final class ArrayExtensionTests: XCTestCase {
         // It's technically possible but extremely unlikely that a shuffle would result in the same order
         // So if we perform multiple shuffles, at least one should be different
         var atLeastOneDifferent = false
-        for _ in 1 ... 5 {
+        for _ in 1...5 {
             if original != original.shuffled() {
                 atLeastOneDifferent = true
                 break
@@ -48,7 +48,7 @@ final class ArrayExtensionTests: XCTestCase {
 
         // Multiple shuffles test
         var atLeastOneDifferent = false
-        for _ in 1 ... 5 {
+        for _ in 1...5 {
             var testArray = original
             testArray.shuffle()
             if testArray != original {
@@ -274,7 +274,7 @@ final class ArrayExtensionTests: XCTestCase {
 
     func testRandomElement() {
         // Not deterministic, but we can test that it returns an element from the array
-        for _ in 1 ... 10 {
+        for _ in 1...10 {
             if let element = intArray.randomElement() {
                 XCTAssertTrue(intArray.contains(element))
             } else {
