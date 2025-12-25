@@ -8,12 +8,12 @@
     extension LogLevel {
         var nsloggerLevel: Int32 {
             switch self {
-            case .debug: 3
-            case .info: 2
-            case .notice: 1
-            case .warning: 1
-            case .error: 0
-            case .fault: 0
+            case .debug: Int32(Logger.Level.noise.rawValue)
+            case .info: Int32(Logger.Level.important.rawValue)
+            case .notice: Int32(Logger.Level.info.rawValue)
+            case .warning: Int32(Logger.Level.warning.rawValue)
+            case .error: Int32(Logger.Level.error.rawValue)
+            case .fault: Int32(Logger.Level.error.rawValue)
             }
         }
     }
