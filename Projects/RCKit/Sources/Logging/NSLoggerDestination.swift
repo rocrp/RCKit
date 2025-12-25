@@ -1,40 +1,47 @@
 //
-//  RCKitLog+NSLogger.swift
+//  NSLoggerDestination.swift
 //
 
 #if canImport(NSLoggerSwift)
     import NSLoggerSwift
 
-    extension RCKitLog.Level {
+    extension LogLevel {
         var nsloggerLevel: Int32 {
             switch self {
-            case .debug: return 3
-            case .info: return 2
-            case .notice: return 1
-            case .warning: return 1
-            case .error: return 0
-            case .fault: return 0
+            case .debug: 3
+            case .info: 2
+            case .notice: 1
+            case .warning: 1
+            case .error: 0
+            case .fault: 0
             }
         }
     }
 
-    struct NSLoggerSink: LogSink {
+    public struct NSLoggerDestination: LogDestination {
+        public let minimumLevel: LogLevel
         private let domain: String
 
-        init(domain: String) {
+        public init(domain: String, minimumLevel: LogLevel = .debug) {
             self.domain = domain
+            self.minimumLevel = minimumLevel
         }
 
-        func send(
-            level: RCKitLog.Level,
+        public func send(
+            level: LogLevel,
             message: String,
+            subsystem: String,
+            category: String,
             file: String,
             line: UInt,
             function: String
         ) {
+            guard level >= minimumLevel else { return }
+
             let logger = LoggerGetDefaultLogger()
             let safeLine = min(line, UInt(Int32.max))
             let lineNumber = Int32(safeLine)
+
             file.withCString { fileCString in
                 function.withCString { functionCString in
                     LogMessageRawToF(
