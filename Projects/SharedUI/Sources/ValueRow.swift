@@ -1,10 +1,15 @@
 import SwiftUI
 
-struct ValueRow: View {
+public struct ValueRow: View {
     let title: String
     let value: String
 
-    var body: some View {
+    public init(title: String, value: String) {
+        self.title = title
+        self.value = value
+    }
+
+    public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.caption)

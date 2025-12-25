@@ -1,7 +1,8 @@
 import XCTest
-@testable import RCKitDemo
 
-final class UTCTimeTests: XCTestCase {
+@testable import SharedUI
+
+final class UTCDateFormatterTests: XCTestCase {
     func testISO8601UsesUTC() {
         let date = Date(timeIntervalSince1970: 0)
         let formatted = UTCDateFormatter.iso8601String(from: date)

@@ -2,9 +2,10 @@ SHELL := /bin/bash
 
 .PHONY: format lint test build all
 
-# Update these three lines when copying this Makefile to another project.
+# Update these lines when copying this Makefile to another project.
 WORKSPACE := RCKit.xcworkspace
-SCHEME := RCKitDemo
+IOS_SCHEME := App
+MACOS_SCHEME := MacApp
 TEST_SCHEME := RCKitTests
 
 SWIFT_FILES = fd -0 -e swift -E Derived -E .build -E .git -E Tuist/.build -E '*.xcodeproj' -E '*.xcworkspace' .
@@ -22,10 +23,9 @@ test:
 	tuist test "$(TEST_SCHEME)" --no-selective-testing --platform macOS
 
 build:
-	@if [ -z "$(SCHEME)" ]; then echo "error: SCHEME not set; edit Makefile or pass SCHEME=..." >&2; exit 1; fi
 	tuist generate --no-open
 	@if [ ! -d "$(WORKSPACE)" ]; then echo "error: WORKSPACE '$(WORKSPACE)' not found; edit Makefile or pass WORKSPACE=..." >&2; exit 1; fi
-	xcodebuild -workspace "$(WORKSPACE)" -scheme "$(SCHEME)" -destination 'platform=macOS' build
-	xcodebuild -workspace "$(WORKSPACE)" -scheme "$(SCHEME)" -destination 'generic/platform=iOS Simulator' build
+	xcodebuild -workspace "$(WORKSPACE)" -scheme "$(MACOS_SCHEME)" -destination 'platform=macOS' build
+	xcodebuild -workspace "$(WORKSPACE)" -scheme "$(IOS_SCHEME)" -destination 'generic/platform=iOS Simulator' build
 
 all: format lint test

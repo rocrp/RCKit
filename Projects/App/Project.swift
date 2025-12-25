@@ -1,0 +1,27 @@
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project.iOSApp(
+    name: "App",
+    dependencies: [
+        .project(target: "SharedUI", path: "../SharedUI"),
+        .project(target: "RCKit", path: "../RCKit"),
+        .xcframework(
+            path: "../../Dependencies/MMKV.xcframework",
+            status: .optional,
+            condition: .when([.ios])
+        ),
+        .xcframework(
+            path: "../../Dependencies/NSLoggerSwift.xcframework",
+            status: .optional,
+            condition: .when([.ios])
+        ),
+    ],
+    infoPlistExtension: [
+        "NSBonjourServices": [
+            "_nslogger._tcp",
+            "_nslogger-ssl._tcp",
+        ],
+        "NSLocalNetworkUsageDescription": "Access to the local network for development builds",
+    ]
+)

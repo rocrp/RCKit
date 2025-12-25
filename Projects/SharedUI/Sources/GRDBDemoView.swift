@@ -4,29 +4,35 @@ import SwiftUI
 
 // MARK: - Model
 
-struct DemoNote: Equatable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
-    var id: Int64?
-    var title: String
-    var createdAtUTC: String
+public struct DemoNote: Equatable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
+    public var id: Int64?
+    public var title: String
+    public var createdAtUTC: String
 
-    static let databaseTableName = "demo_notes"
+    public static let databaseTableName = "demo_notes"
 
-    enum Columns {
-        static let title = Column(CodingKeys.title)
-        static let createdAtUTC = Column(CodingKeys.createdAtUTC)
+    public enum Columns {
+        public static let title = Column(CodingKeys.title)
+        public static let createdAtUTC = Column(CodingKeys.createdAtUTC)
     }
 
-    mutating func didInsert(_ inserted: InsertionSuccess) {
+    public init(id: Int64? = nil, title: String, createdAtUTC: String) {
+        self.id = id
+        self.title = title
+        self.createdAtUTC = createdAtUTC
+    }
+
+    public mutating func didInsert(_ inserted: InsertionSuccess) {
         id = inserted.rowID
     }
 }
 
 // MARK: - Database
 
-struct DemoDatabase: Sendable {
+public struct DemoDatabase: Sendable {
     private let dbWriter: any DatabaseWriter
 
-    init(_ dbWriter: any DatabaseWriter) throws {
+    public init(_ dbWriter: any DatabaseWriter) throws {
         self.dbWriter = dbWriter
         try migrator.migrate(dbWriter)
     }
@@ -46,24 +52,24 @@ struct DemoDatabase: Sendable {
         return migrator
     }
 
-    func saveNote(_ note: inout DemoNote) throws {
+    public func saveNote(_ note: inout DemoNote) throws {
         try dbWriter.write { db in
             try note.save(db)
         }
     }
 
-    func deleteAllNotes() throws {
+    public func deleteAllNotes() throws {
         try dbWriter.write { db in
             _ = try DemoNote.deleteAll(db)
         }
     }
 
-    var reader: any DatabaseReader { dbWriter }
+    public var reader: any DatabaseReader { dbWriter }
 }
 
 // MARK: - Shared Instance
 
-extension DemoDatabase {
+public extension DemoDatabase {
     static let shared = makeShared()
 
     private static func makeShared() -> DemoDatabase {
@@ -100,7 +106,7 @@ extension DemoDatabase {
 
 // MARK: - View
 
-struct GRDBDemoView: View {
+public struct GRDBDemoView: View {
     @State private var notes: [DemoNote] = []
     @State private var notesCount = 0
     @State private var newTitle = ""
@@ -110,7 +116,9 @@ struct GRDBDemoView: View {
 
     private let database = DemoDatabase.shared
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         Section("Database") {
             ValueRow(title: "Path", value: DemoDatabase.databasePath ?? "<not ready>")
             ValueRow(title: "Total Notes", value: String(notesCount))
@@ -172,7 +180,7 @@ struct GRDBDemoView: View {
             in: database.reader
         ) { error in
             preconditionFailure("Database observation failed: \(error)")
-        } onChange: { (fetchedNotes, count) in
+        } onChange: { fetchedNotes, count in
             notes = fetchedNotes
             notesCount = count
         }

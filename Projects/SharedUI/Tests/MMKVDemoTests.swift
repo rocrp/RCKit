@@ -1,6 +1,7 @@
 import Foundation
 import XCTest
-@testable import RCKitDemo
+
+@testable import SharedUI
 
 #if canImport(MMKV)
     import MMKV

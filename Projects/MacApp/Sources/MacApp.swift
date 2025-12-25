@@ -1,5 +1,6 @@
 import GRDB
 import RCKit
+import SharedUI
 import SwiftUI
 
 #if canImport(MMKV)
@@ -7,7 +8,7 @@ import SwiftUI
 #endif
 
 @main
-struct RCKitDemoApp: App {
+struct MacApp: App {
     init() {
         configureLogging()
         configureGRDB()
@@ -21,16 +22,7 @@ struct RCKitDemoApp: App {
     }
 
     private func configureLogging() {
-        #if os(macOS)
-            RCKit.log.info("NSLogger disabled on macOS (no dependency linked)")
-        #else
-            #if canImport(NSLoggerSwift)
-                NSLoggerSupport.start()
-                RCKit.log.info("NSLogger available: true")
-            #else
-                RCKit.log.info("NSLogger available: false")
-            #endif
-        #endif
+        RCKit.log.info("NSLogger disabled on macOS (no dependency linked)")
     }
 
     private func configureGRDB() {

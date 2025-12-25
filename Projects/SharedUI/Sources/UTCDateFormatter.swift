@@ -1,7 +1,7 @@
 import Foundation
 
-enum UTCDateFormatter {
-    static func iso8601String(from date: Date) -> String {
+public enum UTCDateFormatter {
+    public static func iso8601String(from date: Date) -> String {
         makeFormatter().string(from: date)
     }
 

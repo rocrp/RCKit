@@ -1,7 +1,8 @@
 import Foundation
 import GRDB
 import XCTest
-@testable import RCKitDemo
+
+@testable import SharedUI
 
 final class GRDBDemoDatabaseTests: XCTestCase {
     func testMigrationAndInsert() throws {

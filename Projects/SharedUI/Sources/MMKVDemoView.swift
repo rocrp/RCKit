@@ -5,7 +5,7 @@ import SwiftUI
     import MMKV
 #endif
 
-struct MMKVDemoView: View {
+public struct MMKVDemoView: View {
     #if canImport(MMKV)
         @State private var inputName: String = ""
         @State private var inputEnabled: Bool = false
@@ -14,7 +14,9 @@ struct MMKVDemoView: View {
         @State private var storedEnabled: Bool = false
         @State private var storedUTC: String = ""
 
-        var body: some View {
+        public init() {}
+
+        public var body: some View {
             Section("Write") {
                 TextField("Name", text: $inputName)
                     #if os(iOS)
@@ -80,7 +82,9 @@ struct MMKVDemoView: View {
             return mmkv
         }
     #else
-        var body: some View {
+        public init() {}
+
+        public var body: some View {
             Section("MMKV") {
                 Text("MMKV not linked. Add the MMKV binary (CocoaPods or custom build) to enable this demo.")
                     .foregroundStyle(.secondary)
