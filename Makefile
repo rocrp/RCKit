@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 .PHONY: format lint test build all
 
-SWIFT_FILES = fd -0 -e swift -E Derived -E .build -E .git -E Tuist/.build -E RCKit.xcodeproj -E RCKit.xcworkspace .
+SWIFT_FILES = fd -0 -e swift -E Derived -E .build -E .git -E Tuist/.build -E '*.xcodeproj' -E '*.xcworkspace' .
 
 format:
 	$(SWIFT_FILES) | xargs -0 swift format --in-place --configuration .swift-format
