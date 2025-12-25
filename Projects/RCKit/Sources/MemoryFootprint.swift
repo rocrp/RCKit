@@ -80,7 +80,7 @@ public final class MemoryFootprint {
                 let error: Error =
                     String(cString: mach_error_string(kern), encoding: .ascii).map { Error.mach($0) }
                     ?? .unknown
-                RCKit.log.error("Failed to get memory: \(error.localizedDescription)")
+                Log.default.error("Failed to get memory: \(error.localizedDescription)")
                 return .failure(error)
             }
         #endif
@@ -97,7 +97,7 @@ public final class MemoryFootprint {
     /// Log the current memory usage
     public static func logMemoryUsage() throws {
         let usage = try getMemoryUsage().get()
-        RCKit.log.info("Memory usage: \(usage.formattedString())")
+        Log.default.info("Memory usage: \(usage.formattedString())")
     }
 }
 

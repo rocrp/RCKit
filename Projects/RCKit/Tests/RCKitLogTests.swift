@@ -5,12 +5,12 @@ import Testing
 
 struct LogTests {
     @Test func logSmokeTest() {
-        RCKit.log.info("log smoke test")
-        RCKit.log.debug("debug message")
-        RCKit.log.warning("warning message")
-        RCKit.log.error("error message")
-        RCKit.log.error("error with error", error: NSError(domain: "test", code: 1))
-        RCKit.log.printDebugInfo()
+        Log.default.info("log smoke test")
+        Log.default.debug("debug message")
+        Log.default.warning("warning message")
+        Log.default.error("error message")
+        Log.default.error("error with error", error: NSError(domain: "test", code: 1))
+        Log.default.printDebugInfo()
     }
 
     @Test func logWithMetadata() {

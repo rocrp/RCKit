@@ -7,6 +7,8 @@ import SwiftUI
     import MMKV
 #endif
 
+private let logger = Log.default
+
 @main
 struct MacApp: App {
     init() {
@@ -22,19 +24,15 @@ struct MacApp: App {
     }
 
     private func configureLogging() {
-        #if canImport(NSLogger)
-            NSLoggerSupport.start()
-            RCKit.log.info("NSLogger available: true")
-        #else
-            RCKit.log.info("NSLogger available: false")
-        #endif
+        NSLoggerSupport.start()
+        logger.info("NSLogger started")
     }
 
     private func configureGRDB() {
         // Access shared instance to trigger initialization and migration
         _ = DemoDatabase.shared
         if let databasePath = DemoDatabase.databasePath {
-            RCKit.log.info("GRDB ready", metadata: ["path": databasePath])
+            logger.info("GRDB ready", metadata: ["path": databasePath])
         }
     }
 
@@ -44,9 +42,9 @@ struct MacApp: App {
             if rootPath.isEmpty {
                 preconditionFailure("MMKV.initialize returned empty path")
             }
-            RCKit.log.info("MMKV ready", metadata: ["root": rootPath])
+            logger.info("MMKV ready", metadata: ["root": rootPath])
         #else
-            RCKit.log.info("MMKV not linked")
+            logger.info("MMKV not linked")
         #endif
     }
 }

@@ -1,6 +1,8 @@
 import RCKit
 import SwiftUI
 
+private let logger = Log.default
+
 public struct ActionsDemoView: View {
     public var onRefresh: (() -> Void)?
 
@@ -14,7 +16,7 @@ public struct ActionsDemoView: View {
                 onRefresh?()
             }
             Button("Log Debug Info") {
-                RCKit.log.printDebugInfo()
+                logger.printDebugInfo()
             }
         }
     }

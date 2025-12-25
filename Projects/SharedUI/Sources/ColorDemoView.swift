@@ -1,6 +1,8 @@
 import RCKit
 import SwiftUI
 
+private let logger = Log.default
+
 public struct ColorDemoView: View {
     @State private var color: Color = .random()
 
@@ -17,7 +19,7 @@ public struct ColorDemoView: View {
             }
             Button("Randomize Color") {
                 color = .random()
-                RCKit.log.info("Randomized color", metadata: ["hex": color.hex()])
+                logger.info("Randomized color", metadata: ["hex": color.hex()])
             }
         }
     }

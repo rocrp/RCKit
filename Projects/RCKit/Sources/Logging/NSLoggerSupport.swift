@@ -23,7 +23,8 @@
 
         public static func start(
             options: UInt32 = defaultOptions,
-            useBonjourForBuildUser: Bool = false
+            useBonjourForBuildUser: Bool = false,
+            minimumLevel: LogLevel = .debug
         ) {
             let logger = LoggerGetDefaultLogger()
             LoggerSetOptions(logger, options)
@@ -31,17 +32,19 @@
                 LoggerSetupBonjourForBuildUser()
             }
             LoggerStart(logger)
+
+            // Auto-add NSLoggerDestination
+            Log.addDestination(NSLoggerDestination(minimumLevel: minimumLevel))
         }
     }
 #else
     public enum NSLoggerSupport {
         public static func start(
             options: UInt32 = 0,
-            useBonjourForBuildUser: Bool = false
+            useBonjourForBuildUser: Bool = false,
+            minimumLevel: LogLevel = .debug
         ) {
-            preconditionFailure(
-                "NSLogger unavailable. Add NSLogger package dependency and ensure it is linked for iOS targets."
-            )
+            // No-op when NSLogger is not available
         }
     }
 #endif

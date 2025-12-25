@@ -20,10 +20,8 @@
 
     public struct NSLoggerDestination: LogDestination {
         public let minimumLevel: LogLevel
-        private let domain: String
 
-        public init(domain: String, minimumLevel: LogLevel = .debug) {
-            self.domain = domain
+        public init(minimumLevel: LogLevel = .debug) {
             self.minimumLevel = minimumLevel
         }
 
@@ -41,6 +39,7 @@
             let logger = LoggerGetDefaultLogger()
             let safeLine = min(line, UInt(Int32.max))
             let lineNumber = Int32(safeLine)
+            let domain = "\(subsystem):\(category)"
 
             file.withCString { fileCString in
                 function.withCString { functionCString in

@@ -23,16 +23,40 @@ Dependency:
 ]
 ```
 
-No bootstrap needed. Use `RCKit.log` directly.
+## Logging
 
-## Notes
-- Logging: OSLog + NSLogger (optional)
-- Fail-fast: invalid inputs preconditionFailure
+```swift
+import RCKit
+
+// Create a logger alias (recommended pattern)
+private let logger = Log.default
+
+logger.info("message")
+logger.debug("debug info")
+logger.error("failed", metadata: ["code": 500])
+
+// Or create custom logger with specific category
+private let networkLogger = Log(category: "network")
+networkLogger.info("request sent")
+```
+
+Output format: `message (File.swift:42 functionName())`
 
 ## NSLogger (optional)
-- Local SPM package dependency: `../NSLogger` (module `NSLogger`)
+
+- Local SPM package: `../NSLogger`
 - Supports iOS and macOS
-- Demo apps auto-start and log availability.
-- Info.plist includes `NSBonjourServices` + `NSLocalNetworkUsageDescription`.
-- Manual start: `NSLoggerSupport.start()`; for per-user Bonjour use `useBonjourForBuildUser: true`.
-- Disable sink via `RCKitLog.makeLogger(enableNSLogger: false)`.
+- Auto-registers destination when started:
+
+```swift
+// In app startup
+NSLoggerSupport.start()  // Auto-adds NSLoggerDestination
+log.info("ready")        // Sent to both OSLog and NSLogger
+```
+
+- NSLogger domain = `subsystem:category` (e.g., `com.example.app:network`)
+- Info.plist includes `NSBonjourServices` + `NSLocalNetworkUsageDescription`
+- Per-user Bonjour: `NSLoggerSupport.start(useBonjourForBuildUser: true)`
+
+## Notes
+- Fail-fast: invalid inputs preconditionFailure

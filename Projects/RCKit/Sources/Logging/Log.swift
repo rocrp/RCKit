@@ -29,6 +29,11 @@ public struct Log: Sendable {
         destinationsLock.withLock { _destinations }
     }
 
+    // MARK: - Default Logger
+
+    /// Shared default logger instance
+    public static let `default` = Log()
+
     // MARK: - Default Minimum Level
 
     public static let defaultMinimumLevel: LogLevel = {
@@ -87,7 +92,7 @@ public struct Log: Sendable {
     ) {
         guard level >= minimumLevel else { return }
 
-        let composed = render(message(), metadata: metadata)
+        let composed = render(message(), metadata: metadata, file: file, line: line, function: function)
 
         // OSLog
         osLogger.log(level: level.osLogType, "\(composed, privacy: .public)")
@@ -185,22 +190,29 @@ public struct Log: Sendable {
 
     private func render(
         _ message: String,
-        metadata: [String: any CustomStringConvertible]?
+        metadata: [String: any CustomStringConvertible]?,
+        file: String,
+        line: UInt,
+        function: String
     ) -> String {
-        guard let metadata, !metadata.isEmpty else {
-            return message
+        let baseMessage: String
+        if let metadata, !metadata.isEmpty {
+            let metaString =
+                metadata
+                .sorted { $0.key < $1.key }
+                .map { key, value in
+                    let renderedValue = shouldRedact(key: key) ? "<redacted>" : String(describing: value)
+                    return "\(key)=\(renderedValue)"
+                }
+                .joined(separator: " ")
+            baseMessage = "\(message) [\(metaString)]"
+        } else {
+            baseMessage = message
         }
 
-        let metaString =
-            metadata
-            .sorted { $0.key < $1.key }
-            .map { key, value in
-                let renderedValue = shouldRedact(key: key) ? "<redacted>" : String(describing: value)
-                return "\(key)=\(renderedValue)"
-            }
-            .joined(separator: " ")
-
-        return "\(message) [\(metaString)]"
+        // Extract filename from #fileID (e.g., "RCKit/Log.swift" → "Log.swift")
+        let fileName = file.split(separator: "/").last.map(String.init) ?? file
+        return "\(baseMessage) (\(fileName):\(line) \(function))"
     }
 
     private func shouldRedact(key: String) -> Bool {
