@@ -6,14 +6,14 @@
     import NSLogger
 
     extension LogLevel {
-        var nsloggerLevel: Int32 {
+        var nsloggerLevel: Logger.Level {
             switch self {
-            case .debug: Int32(Logger.Level.noise.rawValue)
-            case .info: Int32(Logger.Level.important.rawValue)
-            case .notice: Int32(Logger.Level.info.rawValue)
-            case .warning: Int32(Logger.Level.warning.rawValue)
-            case .error: Int32(Logger.Level.error.rawValue)
-            case .fault: Int32(Logger.Level.error.rawValue)
+            case .debug: .noise
+            case .info: .important
+            case .notice: .info
+            case .warning: .warning
+            case .error: .error
+            case .fault: .error
             }
         }
     }
@@ -50,7 +50,7 @@
                         lineNumber,
                         functionCString,
                         domain,
-                        level.nsloggerLevel,
+                        Int32(level.nsloggerLevel.rawValue),
                         message
                     )
                 }
