@@ -22,7 +22,12 @@ struct MacApp: App {
     }
 
     private func configureLogging() {
-        RCKit.log.info("NSLogger disabled on macOS (no dependency linked)")
+        #if canImport(NSLogger)
+            NSLoggerSupport.start()
+            RCKit.log.info("NSLogger available: true")
+        #else
+            RCKit.log.info("NSLogger available: false")
+        #endif
     }
 
     private func configureGRDB() {

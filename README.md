@@ -26,12 +26,13 @@ Dependency:
 No bootstrap needed. Use `RCKit.log` directly.
 
 ## Notes
-- Logging: OSLog + NSLogger (optional, iOS only)
+- Logging: OSLog + NSLogger (optional)
 - Fail-fast: invalid inputs preconditionFailure
 
-## NSLogger (optional, iOS only)
+## NSLogger (optional)
 - Local SPM package dependency: `../NSLogger` (module `NSLogger`)
-- Demo auto-starts and logs availability in `RCKitDemoApp`.
-- Info.plist for demo includes `NSBonjourServices` + `NSLocalNetworkUsageDescription`.
+- Supports iOS and macOS
+- Demo apps auto-start and log availability.
+- Info.plist includes `NSBonjourServices` + `NSLocalNetworkUsageDescription`.
 - Manual start: `NSLoggerSupport.start()`; for per-user Bonjour use `useBonjourForBuildUser: true`.
 - Disable sink via `RCKitLog.makeLogger(enableNSLogger: false)`.

@@ -50,9 +50,16 @@ public extension Project {
 
     static func macOSApp(
         name: String,
-        dependencies: [TargetDependency] = []
+        dependencies: [TargetDependency] = [],
+        infoPlistExtension: [String: Plist.Value] = [:]
     ) -> Project {
-        Project(
+        var infoPlist: [String: Plist.Value] = [
+            "CFBundleShortVersionString": "1.0",
+            "CFBundleVersion": "1",
+        ]
+        infoPlist.merge(infoPlistExtension) { _, new in new }
+
+        return Project(
             name: name,
             targets: [
                 .target(
@@ -61,10 +68,7 @@ public extension Project {
                     product: .app,
                     bundleId: "dev.rocry.\(name)",
                     deploymentTargets: .macOS(macOSDeploymentTarget),
-                    infoPlist: .extendingDefault(with: [
-                        "CFBundleShortVersionString": "1.0",
-                        "CFBundleVersion": "1",
-                    ]),
+                    infoPlist: .extendingDefault(with: infoPlist),
                     sources: ["Sources/**"],
                     resources: ["Resources/**"],
                     dependencies: dependencies,
