@@ -12,6 +12,7 @@ import PackageDescription
 let package = Package(
     name: "RCKit",
     dependencies: [
-        .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0")
+        .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0"),
+        .package(path: "../../NSLogger"),
     ]
 )

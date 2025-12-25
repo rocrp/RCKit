@@ -5,10 +5,6 @@ let project = Project.framework(
     name: "RCKit",
     destinations: [.iPhone, .iPad, .mac],
     dependencies: [
-        .xcframework(
-            path: "../../Dependencies/NSLoggerSwift.xcframework",
-            status: .optional,
-            condition: .when([.ios])
-        )
+        .external(name: "NSLogger", condition: .when([.ios]))
     ]
 )

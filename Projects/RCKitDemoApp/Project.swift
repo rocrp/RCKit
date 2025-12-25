@@ -11,11 +11,7 @@ let project = Project.iOSApp(
             status: .optional,
             condition: .when([.ios])
         ),
-        .xcframework(
-            path: "../../Dependencies/NSLoggerSwift.xcframework",
-            status: .optional,
-            condition: .when([.ios])
-        ),
+        .external(name: "NSLogger", condition: .when([.ios])),
     ],
     infoPlistExtension: [
         "NSBonjourServices": [

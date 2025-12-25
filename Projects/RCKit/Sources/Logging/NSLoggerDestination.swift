@@ -2,8 +2,8 @@
 //  NSLoggerDestination.swift
 //
 
-#if canImport(NSLoggerSwift)
-    import NSLoggerSwift
+#if canImport(NSLogger)
+    import NSLogger
 
     extension LogLevel {
         var nsloggerLevel: Int32 {

@@ -2,8 +2,8 @@
 //  NSLoggerSupport.swift
 //
 
-#if canImport(NSLoggerSwift)
-    import NSLoggerSwift
+#if canImport(NSLogger)
+    import NSLogger
 
     public enum NSLoggerSupport {
         public static let defaultOptions: UInt32 =
@@ -40,7 +40,7 @@
             useBonjourForBuildUser: Bool = false
         ) {
             preconditionFailure(
-                "NSLoggerSwift unavailable. Add NSLoggerSwift.xcframework and ensure it is linked for iOS targets."
+                "NSLogger unavailable. Add NSLogger package dependency and ensure it is linked for iOS targets."
             )
         }
     }

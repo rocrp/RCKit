@@ -32,7 +32,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Configuration
 
     private func configureLogging() {
-        #if canImport(NSLoggerSwift)
+        #if canImport(NSLogger)
             NSLoggerSupport.start()
             RCKit.log.info("NSLogger available: true")
         #else
