@@ -13,6 +13,6 @@ let package = Package(
     name: "RCKit",
     dependencies: [
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0"),
-        .package(path: "../../NSLogger"),
+        .package(url: "https://github.com/fpillet/NSLogger", branch: "master"),
     ]
 )

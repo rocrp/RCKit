@@ -1,4 +1,5 @@
 {
+  "originHash" : "12813df6e82b64bd95fd44b1319611d5492e7b3a5e9ec22fc5c2755f85bf1f32",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -8,7 +9,16 @@
         "revision" : "aa0079aeb82a4bf00324561a40bffe68c6fe1c26",
         "version" : "7.9.0"
       }
+    },
+    {
+      "identity" : "nslogger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/fpillet/NSLogger",
+      "state" : {
+        "branch" : "master",
+        "revision" : "640681c81ed021136aeacf71a4dee1e90940e5b5"
+      }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
