@@ -4,8 +4,8 @@ let workspace = Workspace(
     name: "RCKit",
     projects: [
         "Projects/RCKit",
-        "Projects/App",
-        "Projects/MacApp",
+        "Projects/RCKitDemoApp",
+        "Projects/RCKitDemoMacApp",
         "Projects/SharedUI",
     ]
 )

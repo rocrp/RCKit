@@ -4,8 +4,8 @@ SHELL := /bin/bash
 
 # Update these lines when copying this Makefile to another project.
 WORKSPACE := RCKit.xcworkspace
-IOS_SCHEME := App
-MACOS_SCHEME := MacApp
+IOS_SCHEME := RCKitDemoApp
+MACOS_SCHEME := RCKitDemoMacApp
 TEST_SCHEME := RCKitTests
 
 SWIFT_FILES = fd -0 -e swift -E Derived -E .build -E .git -E Tuist/.build -E '*.xcodeproj' -E '*.xcworkspace' .

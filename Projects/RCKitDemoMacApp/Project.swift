@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.macOSApp(
-    name: "MacApp",
+    name: "RCKitDemoMacApp",
     dependencies: [
         .project(target: "SharedUI", path: "../SharedUI"),
         .project(target: "RCKit", path: "../RCKit"),
