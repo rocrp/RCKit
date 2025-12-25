@@ -27,7 +27,7 @@ public enum LogLevel: Int, Comparable, Sendable {
         }
     }
 
-    var symbol: String {
+    public var symbol: String {
         switch self {
         case .debug: "🔍"
         case .info: "ℹ️"
@@ -38,7 +38,7 @@ public enum LogLevel: Int, Comparable, Sendable {
         }
     }
 
-    var label: String {
+    public var label: String {
         switch self {
         case .debug: "DEBUG"
         case .info: "INFO"

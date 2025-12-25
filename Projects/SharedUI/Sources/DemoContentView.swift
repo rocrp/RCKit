@@ -25,6 +25,8 @@ public struct DemoContentView: View {
             ColorDemoView()
         case .system:
             SystemDemoView()
+        case .logging:
+            LogDemoView()
         case .grdb:
             GRDBDemoView()
         case .mmkv:

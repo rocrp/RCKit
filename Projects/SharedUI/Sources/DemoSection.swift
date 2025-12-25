@@ -4,6 +4,7 @@ public enum DemoSection: String, CaseIterable, Identifiable, Sendable {
     case identifiers
     case color
     case system
+    case logging
     case grdb
     case mmkv
     case actions
@@ -15,6 +16,7 @@ public enum DemoSection: String, CaseIterable, Identifiable, Sendable {
         case .identifiers: "Identifiers"
         case .color: "Color"
         case .system: "System"
+        case .logging: "Logging"
         case .grdb: "GRDB"
         case .mmkv: "MMKV"
         case .actions: "Actions"
@@ -26,6 +28,7 @@ public enum DemoSection: String, CaseIterable, Identifiable, Sendable {
         case .identifiers: "number"
         case .color: "paintpalette"
         case .system: "gear"
+        case .logging: "doc.text"
         case .grdb: "cylinder"
         case .mmkv: "externaldrive"
         case .actions: "bolt"
