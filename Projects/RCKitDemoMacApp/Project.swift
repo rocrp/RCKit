@@ -6,7 +6,6 @@ let project = Project.macOSApp(
     dependencies: [
         .project(target: "SharedUI", path: "../SharedUI"),
         .project(target: "RCKit", path: "../RCKit"),
-        .external(name: "NSLogger"),
         .xcframework(
             path: "../../Dependencies/MMKV.xcframework",
             status: .optional,

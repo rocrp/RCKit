@@ -11,7 +11,6 @@ let project = Project.iOSApp(
             status: .optional,
             condition: .when([.ios])
         ),
-        .external(name: "NSLogger"),
     ],
     infoPlistExtension: [
         "NSBonjourServices": [
