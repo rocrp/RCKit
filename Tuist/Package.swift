@@ -5,7 +5,12 @@ import PackageDescription
     import struct ProjectDescription.PackageSettings
 
     let packageSettings = PackageSettings(
-        productTypes: [:]
+        // Use dynamic frameworks to avoid "static product may introduce unwanted side effects"
+        // when the same dependency is linked from multiple targets (e.g., SharedUI and apps)
+        productTypes: [
+            "RCKit": .framework,
+            "NSLogger": .framework,
+        ]
     )
 #endif
 
