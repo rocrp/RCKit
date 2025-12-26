@@ -1,12 +1,11 @@
 SHELL := /bin/bash
 
-.PHONY: format lint test build all
+.PHONY: format lint test build all build-spm test-spm generate
 
 # Update these lines when copying this Makefile to another project.
 WORKSPACE := RCKit.xcworkspace
 IOS_SCHEME := RCKitDemoApp
 MACOS_SCHEME := RCKitDemoMacApp
-TEST_SCHEME := RCKitTests
 
 SWIFT_FILES = fd -0 -e swift -E Derived -E .build -E .git -E Tuist/.build -E '*.xcodeproj' -E '*.xcworkspace' .
 
@@ -16,15 +15,22 @@ format:
 lint:
 	$(SWIFT_FILES) | xargs -0 swift format lint --configuration .swift-format
 
-test:
-	@if [ -z "$(TEST_SCHEME)" ]; then echo "error: TEST_SCHEME not set; edit Makefile or pass TEST_SCHEME=..." >&2; exit 1; fi
-	tuist generate --no-open
-	@if [ ! -d "$(WORKSPACE)" ]; then echo "error: WORKSPACE '$(WORKSPACE)' not found; edit Makefile or pass WORKSPACE=..." >&2; exit 1; fi
-	tuist test "$(TEST_SCHEME)" --no-selective-testing --platform macOS
+# SPM targets (for RCKit library)
+build-spm:
+	swift build
 
-build:
+test-spm:
+	swift test
+
+# Tuist targets (for demo apps)
+generate:
+	tuist install
 	tuist generate --no-open
-	@if [ ! -d "$(WORKSPACE)" ]; then echo "error: WORKSPACE '$(WORKSPACE)' not found; edit Makefile or pass WORKSPACE=..." >&2; exit 1; fi
+
+test: test-spm
+
+build: build-spm generate
+	@if [ ! -d "$(WORKSPACE)" ]; then echo "error: WORKSPACE '$(WORKSPACE)' not found" >&2; exit 1; fi
 	xcodebuild -workspace "$(WORKSPACE)" -scheme "$(MACOS_SCHEME)" -destination 'platform=macOS' build
 	xcodebuild -workspace "$(WORKSPACE)" -scheme "$(IOS_SCHEME)" -destination 'generic/platform=iOS Simulator' build
 

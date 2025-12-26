@@ -5,7 +5,7 @@ let project = Project.iOSApp(
     name: "RCKitDemoApp",
     dependencies: [
         .project(target: "SharedUI", path: "../SharedUI"),
-        .project(target: "RCKit", path: "../RCKit"),
+        .external(name: "RCKit"),
         .xcframework(
             path: "../../Dependencies/MMKV.xcframework",
             status: .optional,

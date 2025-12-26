@@ -10,9 +10,9 @@ import PackageDescription
 #endif
 
 let package = Package(
-    name: "RCKit",
+    name: "RCKitDeps",
     dependencies: [
+        .package(path: ".."),
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.0.0"),
-        .package(url: "https://github.com/fpillet/NSLogger", branch: "master"),
     ]
 )
