@@ -57,6 +57,7 @@ log.info("ready")        // Sent to both OSLog and NSLogger
 - NSLogger domain = `subsystem:category` (e.g., `com.example.app:network`)
 - Info.plist includes `NSBonjourServices` + `NSLocalNetworkUsageDescription`
 - Per-user Bonjour: `NSLoggerSupport.start(useBonjourForBuildUser: true)`
+- SSL: `NSLoggerSupport.start(useSSL: true)`
 
 ## Notes
 - Fail-fast: invalid inputs preconditionFailure

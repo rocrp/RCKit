@@ -11,7 +11,6 @@
             | UInt32(kLoggerOption_BrowseBonjour)
             | UInt32(kLoggerOption_BrowsePeerToPeer)
             | UInt32(kLoggerOption_BrowseOnlyLocalDomain)
-            | UInt32(kLoggerOption_UseSSL)
             | UInt32(kLoggerOption_CaptureSystemConsole)
 
         public static let remoteOnlyOptions: UInt32 =
@@ -19,15 +18,21 @@
             | UInt32(kLoggerOption_BrowseBonjour)
             | UInt32(kLoggerOption_BrowsePeerToPeer)
             | UInt32(kLoggerOption_BrowseOnlyLocalDomain)
-            | UInt32(kLoggerOption_UseSSL)
 
         public static func start(
             options: UInt32 = defaultOptions,
+            useSSL: Bool = false,
             useBonjourForBuildUser: Bool = false,
-            minimumLevel: LogLevel = .debug
+            minimumLevel: LogLevel = .debug,
         ) {
             let logger = LoggerGetDefaultLogger()
-            LoggerSetOptions(logger, options)
+            var effectiveOptions = options
+            if useSSL {
+                effectiveOptions |= UInt32(kLoggerOption_UseSSL)
+            } else {
+                effectiveOptions &= ~UInt32(kLoggerOption_UseSSL)
+            }
+            LoggerSetOptions(logger, effectiveOptions)
             if useBonjourForBuildUser {
                 LoggerSetupBonjourForBuildUser()
             }
@@ -41,6 +46,7 @@
     public enum NSLoggerSupport {
         public static func start(
             options: UInt32 = 0,
+            useSSL: Bool = false,
             useBonjourForBuildUser: Bool = false,
             minimumLevel: LogLevel = .debug
         ) {
