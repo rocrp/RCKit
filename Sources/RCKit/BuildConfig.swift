@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import StoreKit
 
 public struct BuildConfig {
     // via: https://stackoverflow.com/posts/33177600/revisions
@@ -18,27 +19,36 @@ public struct BuildConfig {
         return (info.kp_proc.p_flag & P_TRACED) != 0
     }()
 
-    public static let isDebugOrTestFlight: Bool = {
+    // Initializer fires a background Task on first access and returns false immediately.
+    // The Task updates this value once AppTransaction resolves.
+    nonisolated(unsafe) private static var _isTestFlight: Bool = {
+        Task {
+            #if !DEBUG
+            if let result = try? await AppTransaction.shared,
+                case .verified(let appTransaction) = result
+            {
+                _isTestFlight = appTransaction.environment == .sandbox
+            }
+            #endif
+        }
+        return false
+    }()
+
+    public static var isDebugOrTestFlight: Bool {
         #if DEBUG
             return true
         #else
-
-            // this will return true when testflight
-            return Foundation.Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+            return _isTestFlight
         #endif
-    }()
+    }
 
-    public static let channelName: String = {
+    public static var channelName: String {
         #if DEBUG
             return "debug"
         #else
-            if isDebugOrTestFlight {
-                return "testflight"
-            }
-
-            return "appstore"
+            return isDebugOrTestFlight ? "testflight" : "appstore"
         #endif
-    }()
+    }
 }
 
 extension BuildConfig {

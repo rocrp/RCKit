@@ -5,11 +5,12 @@ import PackageDescription
     import struct ProjectDescription.PackageSettings
 
     let packageSettings = PackageSettings(
-        // Use dynamic frameworks to avoid "static product may introduce unwanted side effects"
-        // when the same dependency is linked from multiple targets (e.g., SharedUI and apps)
+        // RCKit must be a dynamic framework to avoid duplicate symbols when linked from
+        // multiple targets (SharedUI, RCKitDemoApp, RCKitDemoMacApp).
+        // NSLogger is only used by RCKit, so keeping it static lets its ObjC symbols
+        // (NSLoggerLibObjC) link correctly into the RCKit framework.
         productTypes: [
             "RCKit": .framework,
-            "NSLogger": .framework,
         ]
     )
 #endif
