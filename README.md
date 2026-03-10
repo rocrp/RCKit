@@ -44,20 +44,31 @@ Output format: `message (File.swift:42 functionName())`
 
 ## NSLogger (optional)
 
-- Local SPM package: `../NSLogger`
-- Supports iOS and macOS
-- Auto-registers destination when started:
+Streams logs to [NSLogger](https://github.com/fpillet/NSLogger) desktop viewer via Bonjour.
 
+### Setup
+
+1. Call `NSLoggerSupport.start()` early in app launch (before other destinations):
 ```swift
-// In app startup
-NSLoggerSupport.start()  // Auto-adds NSLoggerDestination
-log.info("ready")        // Sent to both OSLog and NSLogger
+#if DEBUG
+NSLoggerSupport.start(minimumLevel: .debug)
+#endif
 ```
 
-- NSLogger domain = `subsystem:category` (e.g., `com.example.app:network`)
-- Info.plist includes `NSBonjourServices` + `NSLocalNetworkUsageDescription`
-- Per-user Bonjour: `NSLoggerSupport.start(useBonjourForBuildUser: true)`
-- SSL: `NSLoggerSupport.start(useSSL: true)`
+2. Add to Info.plist:
+```xml
+<key>NSBonjourServices</key>
+<array><string>_nslogger._tcp</string></array>
+<key>NSLocalNetworkUsageDescription</key>
+<string>Discover NSLogger viewer on local network for live logging.</string>
+```
+
+Logs go to both OSLog and NSLogger simultaneously. Domain format: `subsystem:category`.
+
+### Options
+
+- `NSLoggerSupport.start(useBonjourForBuildUser: true)` — per-user Bonjour service name
+- `NSLoggerSupport.start(useSSL: true)` — SSL connection
 
 ## Notes
 - Fail-fast: invalid inputs preconditionFailure
