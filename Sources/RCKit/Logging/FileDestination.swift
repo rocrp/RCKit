@@ -7,6 +7,8 @@ import Foundation
 public final class FileDestination: LogDestination, @unchecked Sendable {
     public let minimumLevel: LogLevel
     public let fileURL: URL
+    public let directory: URL
+    public let prefix: String
 
     private let queue: DispatchQueue
     private let fileHandle: FileHandle
@@ -19,6 +21,8 @@ public final class FileDestination: LogDestination, @unchecked Sendable {
         minimumLevel: LogLevel = .debug
     ) {
         self.minimumLevel = minimumLevel
+        self.directory = directory
+        self.prefix = prefix
         self.queue = DispatchQueue(label: "dev.rocry.rckit.file-log", qos: .utility)
         self.dateFormatter = ISO8601DateFormatter()
         dateFormatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
@@ -70,6 +74,33 @@ public final class FileDestination: LogDestination, @unchecked Sendable {
             guard let self, let data = logLine.data(using: .utf8) else { return }
             try? self.fileHandle.write(contentsOf: data)
         }
+    }
+
+    // MARK: - Reading
+
+    /// All log file URLs in chronological order (oldest first).
+    public func allLogFileURLs() -> [URL] {
+        let fm = FileManager.default
+        guard let files = try? fm.contentsOfDirectory(at: directory, includingPropertiesForKeys: [.creationDateKey]) else {
+            return []
+        }
+        return files
+            .filter { $0.lastPathComponent.hasPrefix(prefix) && $0.pathExtension == "log" }
+            .sorted { url1, url2 in
+                let d1 = (try? url1.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
+                let d2 = (try? url2.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
+                return d1 < d2
+            }
+    }
+
+    /// Concatenated content of all log files (previous sessions + current), chronological order.
+    public func readAllContent() -> String {
+        // Flush current writes before reading
+        queue.sync {}
+
+        return allLogFileURLs().compactMap { url in
+            try? String(contentsOf: url, encoding: .utf8)
+        }.joined()
     }
 
     // MARK: - Private
