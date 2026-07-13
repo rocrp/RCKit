@@ -24,7 +24,7 @@ struct MacApp: App {
     }
 
     private func configureLogging() {
-        NSLoggerSupport.start()
+        Log.bootstrap([NSLoggerSupport.start()] + DemoLogging.destinations)
         logger.info("NSLogger started")
     }
 

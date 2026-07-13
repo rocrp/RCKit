@@ -7,26 +7,35 @@ import OSLog
 
 private typealias SystemLogger = Logger
 
+private final class LogBootstrapState: @unchecked Sendable {
+    private let lock = NSLock()
+    private var bootstrappedDestinations: [any LogDestination]?
+
+    func bootstrap(_ destinations: [any LogDestination]) {
+        lock.withLock {
+            precondition(
+                bootstrappedDestinations == nil,
+                "Log.bootstrap(_:) may only be called once"
+            )
+            bootstrappedDestinations = destinations
+        }
+    }
+
+    var destinations: [any LogDestination] {
+        lock.withLock { bootstrappedDestinations ?? [] }
+    }
+}
+
 public struct Log: Sendable {
     // MARK: - Static Configuration
 
-    private static let destinationsLock = NSLock()
-    nonisolated(unsafe) private static var _destinations: [any LogDestination] = []
+    private static let bootstrapState = LogBootstrapState()
 
-    public static func addDestination(_ destination: any LogDestination) {
-        destinationsLock.withLock {
-            _destinations.append(destination)
-        }
-    }
-
-    public static func removeAllDestinations() {
-        destinationsLock.withLock {
-            _destinations.removeAll()
-        }
-    }
-
-    private static var destinations: [any LogDestination] {
-        destinationsLock.withLock { _destinations }
+    /// Configures the process-wide default Destinations exactly once.
+    ///
+    /// Call this during app startup. A second call is a programmer error and crashes.
+    public static func bootstrap(_ destinations: [any LogDestination]) {
+        bootstrapState.bootstrap(destinations)
     }
 
     // MARK: - Default Logger
@@ -64,6 +73,7 @@ public struct Log: Sendable {
     private let category: String
     private let minimumLevel: LogLevel
     private let redactionMode: RedactionMode
+    private let destinationsOverride: [any LogDestination]?
 
     // MARK: - Initialization
 
@@ -71,12 +81,14 @@ public struct Log: Sendable {
         subsystem: String = Bundle.main.bundleIdentifier ?? "dev.rocry.rckit",
         category: String = "general",
         minimumLevel: LogLevel = defaultMinimumLevel,
-        redactionMode: RedactionMode = .common
+        redactionMode: RedactionMode = .common,
+        destinations: [any LogDestination]? = nil
     ) {
         self.subsystem = subsystem
         self.category = category
         self.minimumLevel = minimumLevel
         self.redactionMode = redactionMode
+        self.destinationsOverride = destinations
         self.osLogger = SystemLogger(subsystem: subsystem, category: category)
     }
 
@@ -100,7 +112,8 @@ public struct Log: Sendable {
         osLogger.log(level: level.osLogType, "\(osLogMessage, privacy: .public)")
 
         // Destinations - receive file/line/function separately
-        for destination in Self.destinations where level >= destination.minimumLevel {
+        for destination in destinationsOverride ?? Self.bootstrapState.destinations
+        where level >= destination.minimumLevel {
             destination.send(
                 level: level,
                 message: baseMessage,
@@ -226,13 +239,13 @@ public struct Log: Sendable {
 // MARK: - Debug Info
 
 extension Log {
-    public func printDebugInfo() {
+    public func printDebugInfo() async {
+        let channel = await BuildConfig.channel()
         info(
             """
             ---------------- Debug Info ----------------
             isDebugging: \(BuildConfig.isDebugging)
-            isDebugOrTestFlight: \(BuildConfig.isDebugOrTestFlight)
-            channelName: \(BuildConfig.channelName)
+            channel: \(channel.rawValue)
             allowDebug: \(BuildConfig.allowDebug)
             Bundle.identifier: \(BuildConfig.Bundle.identifier)
             Bundle.shortVersion: \(BuildConfig.Bundle.shortVersion)

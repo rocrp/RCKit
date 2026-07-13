@@ -39,9 +39,7 @@ extension XID {
     fileprivate static let counterBox = CounterBox()
 
     fileprivate static let bytifiedMachineID = [UInt8](machineID.utf8)
-    fileprivate static let bytifiedPID = pid.bytes
-
-    fileprivate static func _bytifyDate(_ date: Date) throws -> [UInt8] {
+    fileprivate static func _timestamp(for date: Date) throws -> UInt32 {
         if date.timeIntervalSince1970.isNaN {
             throw Error.nanDate
         } else if date.timeIntervalSince1970.isInfinite {
@@ -49,25 +47,44 @@ extension XID {
         } else if date.timeIntervalSince1970 > TimeInterval(UInt32.max) {
             throw Error.dateOverflow
         } else {
-            return UInt32(date.timeIntervalSince1970).bytes
+            return UInt32(date.timeIntervalSince1970)
         }
     }
 
-    fileprivate static func _bytifyCounter() -> [UInt8] {
-        return counterBox.next().bytes
+    static func encode(
+        timestamp: UInt32,
+        machineID: [UInt8],
+        processID: UInt16,
+        counter: UInt32
+    ) -> String {
+        _encode(
+            bytes: _makeBytes(
+                timestamp: timestamp,
+                machineID: machineID,
+                processID: processID,
+                counter: counter
+            )
+        )
     }
 
     fileprivate static func _generateBytes(date: Date) throws -> [UInt8] {
-        // timestamp, 4 bytes, big endian
-        let timestamp = Array(try _bytifyDate(date).prefix(4))
-        // machine id, first 3 bytes of sha256 hash of UUID, big endian
-        let machineID = Array(bytifiedMachineID.prefix(3))
-        // pid, 2 bytes, big endian
-        let pid = Array(bytifiedPID.prefix(2))
-        // self-increased counter, 3 bytes, big endian
-        let counter = Array(_bytifyCounter().suffix(3))
+        _makeBytes(
+            timestamp: try _timestamp(for: date),
+            machineID: Array(bytifiedMachineID.prefix(3)),
+            processID: UInt16(truncatingIfNeeded: pid),
+            counter: counterBox.next()
+        )
+    }
 
-        return timestamp + machineID + pid + counter
+    fileprivate static func _makeBytes(
+        timestamp: UInt32,
+        machineID: [UInt8],
+        processID: UInt16,
+        counter: UInt32
+    ) -> [UInt8] {
+        precondition(machineID.count == 3, "XID machine ID must contain exactly 3 bytes")
+
+        return timestamp.bytes + machineID + processID.bytes + counter.bytes.suffix(3)
     }
 
     fileprivate static func _encode(bytes: [UInt8]) -> String {

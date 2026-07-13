@@ -8,6 +8,7 @@ public enum LogLevel: Int, Comparable, Sendable {
     case debug = 0
     case info
     case notice
+    /// OSLog has no warning tier. Warning records are written as `.error` and exported as ``error``.
     case warning
     case error
     case fault

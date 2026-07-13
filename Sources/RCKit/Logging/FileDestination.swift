@@ -4,6 +4,35 @@
 
 import Foundation
 
+public enum FileDestinationError: LocalizedError {
+    case invalidMaxFileCount(Int)
+    case createDirectoryFailed(URL, underlying: any Error)
+    case createFileFailed(URL)
+    case openFileFailed(URL, underlying: any Error)
+    case cleanupFailed(URL, underlying: any Error)
+    case writeFailed(URL, underlying: any Error)
+    case synchronizeFailed(URL, underlying: any Error)
+
+    public var errorDescription: String? {
+        switch self {
+        case .invalidMaxFileCount(let count):
+            "FileDestination maxFileCount must be greater than zero; received \(count)"
+        case .createDirectoryFailed(let url, let error):
+            "FileDestination could not create log directory at \(url.path()): \(error.localizedDescription)"
+        case .createFileFailed(let url):
+            "FileDestination could not create log file at \(url.path())"
+        case .openFileFailed(let url, let error):
+            "FileDestination could not open log file at \(url.path()): \(error.localizedDescription)"
+        case .cleanupFailed(let url, let error):
+            "FileDestination could not remove old log file at \(url.path()): \(error.localizedDescription)"
+        case .writeFailed(let url, let error):
+            "FileDestination could not write log file at \(url.path()): \(error.localizedDescription)"
+        case .synchronizeFailed(let url, let error):
+            "FileDestination could not synchronize log file at \(url.path()): \(error.localizedDescription)"
+        }
+    }
+}
+
 public final class FileDestination: LogDestination, @unchecked Sendable {
     public let minimumLevel: LogLevel
     public let fileURL: URL
@@ -13,43 +42,56 @@ public final class FileDestination: LogDestination, @unchecked Sendable {
     private let queue: DispatchQueue
     private let fileHandle: FileHandle
     private let dateFormatter: ISO8601DateFormatter
+    private let now: @Sendable () -> Date
+    private var writeError: (any Error)?
 
     public init(
         directory: URL = .cachesDirectory.appending(path: "Logs"),
         prefix: String = "app",
         maxFileCount: Int = 10,
-        minimumLevel: LogLevel = .debug
-    ) {
+        minimumLevel: LogLevel = .debug,
+        now: @escaping @Sendable () -> Date = Date.init
+    ) throws {
+        guard maxFileCount > 0 else {
+            throw FileDestinationError.invalidMaxFileCount(maxFileCount)
+        }
+
         self.minimumLevel = minimumLevel
         self.directory = directory
         self.prefix = prefix
         self.queue = DispatchQueue(label: "dev.rocry.rckit.file-log", qos: .utility)
-        self.dateFormatter = ISO8601DateFormatter()
+        self.now = now
+
+        let dateFormatter = ISO8601DateFormatter()
         dateFormatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        self.dateFormatter = dateFormatter
 
-        // Ensure directory exists
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-
-        // Generate filename with launch timestamp
-        let timestamp = Self.launchTimestamp
-        let filename = "\(prefix)-\(timestamp).log"
-        self.fileURL = directory.appending(path: filename)
-
-        // Create file if needed
-        if !FileManager.default.fileExists(atPath: fileURL.path()) {
-            FileManager.default.createFile(atPath: fileURL.path(), contents: nil)
-        }
-
-        // Open file handle for appending
         do {
-            self.fileHandle = try FileHandle(forWritingTo: fileURL)
-            try fileHandle.seekToEnd()
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         } catch {
-            preconditionFailure("FileDestination: Failed to open log file at \(fileURL.path()): \(error)")
+            throw FileDestinationError.createDirectoryFailed(directory, underlying: error)
         }
 
-        // Cleanup old files
-        Self.cleanupOldFiles(in: directory, prefix: prefix, keeping: maxFileCount)
+        let filename = "\(prefix)-\(Self.filenameTimestamp(from: now())).log"
+        let fileURL = directory.appending(path: filename)
+        self.fileURL = fileURL
+
+        if !FileManager.default.fileExists(atPath: fileURL.path()),
+            !FileManager.default.createFile(atPath: fileURL.path(), contents: nil)
+        {
+            throw FileDestinationError.createFileFailed(fileURL)
+        }
+
+        try Self.cleanupOldFiles(in: directory, prefix: prefix, keeping: maxFileCount)
+
+        do {
+            let fileHandle = try FileHandle(forWritingTo: fileURL)
+            try fileHandle.seekToEnd()
+            self.fileHandle = fileHandle
+        } catch {
+            throw FileDestinationError.openFileFailed(fileURL, underlying: error)
+        }
     }
 
     deinit {
@@ -65,73 +107,87 @@ public final class FileDestination: LogDestination, @unchecked Sendable {
         line: UInt,
         function: String
     ) {
-        guard level >= minimumLevel else { return }
+        let date = now()
 
-        let timestamp = dateFormatter.string(from: Date())
-        let logLine = "[\(timestamp)] [\(level.label)] [\(category)] \(message) (\(file)#\(line) \(function))\n"
+        queue.async {
+            let timestamp = self.dateFormatter.string(from: date)
+            let logLine = "[\(timestamp)] [\(level.label)] [\(category)] \(message) (\(file)#\(line) \(function))\n"
 
-        queue.async { [weak self] in
-            guard let self, let data = logLine.data(using: .utf8) else { return }
-            try? self.fileHandle.write(contentsOf: data)
-        }
-    }
-
-    // MARK: - Reading
-
-    /// All log file URLs in chronological order (oldest first).
-    public func allLogFileURLs() -> [URL] {
-        let fm = FileManager.default
-        guard let files = try? fm.contentsOfDirectory(at: directory, includingPropertiesForKeys: [.creationDateKey]) else {
-            return []
-        }
-        return files
-            .filter { $0.lastPathComponent.hasPrefix(prefix) && $0.pathExtension == "log" }
-            .sorted { url1, url2 in
-                let d1 = (try? url1.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
-                let d2 = (try? url2.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
-                return d1 < d2
+            do {
+                try self.fileHandle.write(contentsOf: Data(logLine.utf8))
+            } catch {
+                self.writeError = self.writeError ?? error
             }
+        }
     }
 
-    /// Concatenated content of all log files (previous sessions + current), chronological order.
-    public func readAllContent() -> String {
-        // Flush current writes before reading
-        queue.sync {}
-
-        return allLogFileURLs().compactMap { url in
-            try? String(contentsOf: url, encoding: .utf8)
-        }.joined()
+    /// All matching log files in chronological order, oldest first.
+    public func allLogFileURLs() throws -> [URL] {
+        try Self.matchingLogFiles(in: directory, prefix: prefix)
+            .sorted { $0.lastPathComponent < $1.lastPathComponent }
     }
 
-    // MARK: - Private
+    /// Concatenated content of all sessions in chronological order.
+    ///
+    /// Pending writes to the current session are synchronized before files are read.
+    public func readAllContent() async throws -> String {
+        try await withCheckedThrowingContinuation { continuation in
+            queue.async {
+                do {
+                    if let writeError = self.writeError {
+                        throw FileDestinationError.writeFailed(self.fileURL, underlying: writeError)
+                    }
 
-    private static let launchTimestamp: String = {
+                    do {
+                        try self.fileHandle.synchronize()
+                    } catch {
+                        throw FileDestinationError.synchronizeFailed(self.fileURL, underlying: error)
+                    }
+
+                    let content = try self.allLogFileURLs().map { url in
+                        try String(contentsOf: url, encoding: .utf8)
+                    }.joined()
+                    continuation.resume(returning: content)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    private static func filenameTimestamp(from date: Date) -> String {
         let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd-HHmmss"
-        formatter.timeZone = .gmt
-        return formatter.string(from: Date())
-    }()
+        return formatter.string(from: date)
+    }
 
-    private static func cleanupOldFiles(in directory: URL, prefix: String, keeping maxCount: Int) {
-        let fm = FileManager.default
-        guard let files = try? fm.contentsOfDirectory(at: directory, includingPropertiesForKeys: [.creationDateKey]) else {
-            return
-        }
+    private static func matchingLogFiles(in directory: URL, prefix: String) throws -> [URL] {
+        let files = try FileManager.default.contentsOfDirectory(
+            at: directory,
+            includingPropertiesForKeys: [.isRegularFileKey]
+        )
+        let filenamePrefix = "\(prefix)-"
 
-        // Filter to matching log files
-        let logFiles =
-            files
-            .filter { $0.lastPathComponent.hasPrefix(prefix) && $0.pathExtension == "log" }
-            .sorted { url1, url2 in
-                let date1 = (try? url1.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
-                let date2 = (try? url2.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
-                return date1 > date2  // newest first
+        return try files.filter { url in
+            guard url.lastPathComponent.hasPrefix(filenamePrefix), url.pathExtension == "log" else {
+                return false
             }
+            return try url.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile == true
+        }
+    }
 
-        // Remove excess files
-        if logFiles.count > maxCount {
-            for file in logFiles.dropFirst(maxCount) {
-                try? fm.removeItem(at: file)
+    private static func cleanupOldFiles(in directory: URL, prefix: String, keeping maxCount: Int) throws {
+        let logFiles = try matchingLogFiles(in: directory, prefix: prefix)
+            .sorted { $0.lastPathComponent > $1.lastPathComponent }
+
+        for file in logFiles.dropFirst(maxCount) {
+            do {
+                try FileManager.default.removeItem(at: file)
+            } catch {
+                throw FileDestinationError.cleanupFailed(file, underlying: error)
             }
         }
     }

@@ -1,4 +1,5 @@
 import Foundation
+import RCKit
 import XCTest
 
 @testable import SharedUI
@@ -22,7 +23,7 @@ final class MMKVDemoTests: XCTestCase {
                 return
             }
 
-            let utc = UTCDateFormatter.iso8601String(from: Date(timeIntervalSince1970: 0))
+            let utc = ISO8601UTC.string(from: Date(timeIntervalSince1970: 0))
             mmkv.set(true, forKey: "flag")
             mmkv.set(utc, forKey: "saved_at_utc")
 

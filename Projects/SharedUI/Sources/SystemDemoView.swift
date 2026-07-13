@@ -3,6 +3,7 @@ import SwiftUI
 
 public struct SystemDemoView: View {
     @State private var memory: String = ""
+    @State private var channel: BuildConfig.Channel?
 
     public init() {}
 
@@ -10,19 +11,20 @@ public struct SystemDemoView: View {
         Section("System") {
             ValueRow(title: "Memory", value: memory)
             ValueRow(title: "Bundle", value: BuildConfig.Bundle.identifier)
-            ValueRow(title: "Channel", value: BuildConfig.channelName)
+            ValueRow(title: "Channel", value: channel?.rawValue ?? "Resolving…")
             Button("Refresh Memory") {
                 loadMemory()
             }
         }
         .task {
+            channel = await BuildConfig.channel()
             loadMemory()
         }
     }
 
     private func loadMemory() {
         do {
-            memory = try MemoryFootprint.getFormattedMemoryUsage()
+            memory = try MemoryFootprint.getMemoryUsage().get().formattedString()
         } catch {
             preconditionFailure("MemoryFootprint failed: \(error)")
         }

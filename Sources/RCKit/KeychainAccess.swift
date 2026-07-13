@@ -19,14 +19,21 @@ public class KeychainAccess {
 
     private let jsonEncoder: JSONEncoder
     private let jsonDecoder: JSONDecoder
+    private let backend: any KeychainBackend
 
     /// Initialize a KeychainAccess instance
     /// - Parameters:
     ///   - service: Service identifier for the keychain items
     ///   - accessGroup: Access group for shared keychain items (optional)
-    public init(service: String, accessGroup: String? = nil) {
+    ///   - backend: Backend that performs keychain item operations
+    public init(
+        service: String,
+        accessGroup: String? = nil,
+        backend: any KeychainBackend = SecItemKeychainBackend()
+    ) {
         self.service = service
         self.accessGroup = accessGroup
+        self.backend = backend
         self.jsonEncoder = Self.makeUTCJSONEncoder()
         self.jsonDecoder = Self.makeUTCJSONDecoder()
     }
@@ -75,7 +82,7 @@ public class KeychainAccess {
             kSecValueData as String: data
         ]
 
-        let status = SecItemUpdate(query as CFDictionary, attributesToUpdate as CFDictionary)
+        let status = backend.update(query, attributes: attributesToUpdate)
 
         if status == errSecSuccess {
             return .success(())
@@ -86,7 +93,7 @@ public class KeychainAccess {
             // Add the data to the existing query for adding
             query[kSecValueData as String] = data
 
-            let addStatus = SecItemAdd(query as CFDictionary, nil)
+            let addStatus = backend.add(query)
             if addStatus == errSecSuccess {
                 return .success(())
             } else {
@@ -105,8 +112,7 @@ public class KeychainAccess {
         query[kSecReturnData as String] = kCFBooleanTrue
         query[kSecMatchLimit as String] = kSecMatchLimitOne
 
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        let (status, result) = backend.copyMatching(query)
 
         guard status == errSecSuccess else {
             return .failure(
@@ -190,7 +196,7 @@ public class KeychainAccess {
     public func delete(for account: String) -> Result<Void, KeychainError> {
         let query = baseQuery(for: account)
 
-        let status = SecItemDelete(query as CFDictionary)
+        let status = backend.delete(query)
         guard status == errSecSuccess || status == errSecItemNotFound else {
             return .failure(.unhandledError(status: status))
         }
@@ -203,7 +209,7 @@ public class KeychainAccess {
     /// - Returns: A boolean indicating whether the item exists
     public func exists(for account: String) -> Bool {
         let query = baseQuery(for: account)
-        let status = SecItemCopyMatching(query as CFDictionary, nil)
+        let (status, _) = backend.copyMatching(query)
         return status == errSecSuccess
     }
 

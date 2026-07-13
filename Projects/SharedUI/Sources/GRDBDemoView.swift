@@ -1,5 +1,6 @@
 import Foundation
 import GRDB
+import RCKit
 import SwiftUI
 
 // MARK: - Model
@@ -190,7 +191,7 @@ public struct GRDBDemoView: View {
         let trimmed = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        let utcString = UTCDateFormatter.iso8601String(from: Date())
+        let utcString = ISO8601UTC.string(from: Date())
 
         do {
             var note = DemoNote(id: nil, title: trimmed, createdAtUTC: utcString)

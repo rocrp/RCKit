@@ -1,4 +1,5 @@
 import Foundation
+import RCKit
 import SwiftUI
 
 #if canImport(MMKV)
@@ -48,7 +49,7 @@ public struct MMKVDemoView: View {
         }
 
         private func save() {
-            let utcString = UTCDateFormatter.iso8601String(from: Date())
+            let utcString = ISO8601UTC.string(from: Date())
             let mmkv = requireMMKV()
             mmkv.set(inputName, forKey: keyName)
             mmkv.set(inputEnabled, forKey: keyEnabled)

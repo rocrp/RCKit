@@ -80,24 +80,9 @@ public final class MemoryFootprint {
                 let error: Error =
                     String(cString: mach_error_string(kern), encoding: .ascii).map { Error.mach($0) }
                     ?? .unknown
-                Log.default.error("Failed to get memory: \(error.localizedDescription)")
                 return .failure(error)
             }
         #endif
-    }
-
-    /// Get the current memory usage as a formatted string
-    /// - Parameter unit: The unit to format the memory in (default is auto)
-    /// - Returns: A formatted string or an error message
-    public static func getFormattedMemoryUsage(unit: MemoryUnit = .auto) throws -> String {
-        let usage = try getMemoryUsage().get()
-        return usage.formattedString(unit: unit)
-    }
-
-    /// Log the current memory usage
-    public static func logMemoryUsage() throws {
-        let usage = try getMemoryUsage().get()
-        Log.default.info("Memory usage: \(usage.formattedString())")
     }
 }
 
@@ -113,7 +98,7 @@ extension UInt64 {
             return String(format: "%.0f bytes", bytes)
         case 1024..<(1024 * 1024):
             return String(format: "%.1f KB", bytes / 1024)
-        case 1024..<(1024 * 1024 * 1024):
+        case (1024 * 1024)..<(1024 * 1024 * 1024):
             return String(format: "%.1f MB", bytes / (1024 * 1024))
         default:
             return String(format: "%.2f GB", bytes / (1024 * 1024 * 1024))

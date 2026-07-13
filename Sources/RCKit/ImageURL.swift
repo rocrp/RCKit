@@ -22,24 +22,16 @@ extension URL {
         }
     }
     // https://unsplash.com/documentation#supported-parameters
-    public mutating func adjustImageSize(_ size: SizeStrategy) {
+    public func adjustedImageSize(_ size: SizeStrategy) -> URL? {
         guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
-            preconditionFailure("Invalid URL for image sizing: \(absoluteString)")
+            return nil
         }
 
-        guard let host = _host else {
-            preconditionFailure("URL host missing for image sizing: \(absoluteString)")
+        guard _host == "images.unsplash.com" else {
+            return nil
         }
 
-        switch host {
-        case "images.unsplash.com":
-            guard let url = components._adjustUnsplash(size).url else {
-                preconditionFailure("Failed to build Unsplash image URL: \(absoluteString)")
-            }
-            self = url
-        default:
-            preconditionFailure("Unsupported image host for sizing: \(host)")
-        }
+        return components._adjustUnsplash(size).url
     }
 }
 

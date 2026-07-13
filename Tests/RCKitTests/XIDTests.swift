@@ -30,6 +30,17 @@ final class XIDTests: XCTestCase {
         XCTAssertNotEqual(xid1, xid2, "XIDs with different dates should not be equal")
     }
 
+    func testGoXIDReferenceVectorByteLayoutAndEncoding() {
+        let encoded = XID.encode(
+            timestamp: 1_300_816_219,
+            machineID: [0x60, 0xf4, 0x86],
+            processID: 0xe428,
+            counter: 0x41_2d_c9
+        )
+
+        XCTAssertEqual(encoded, "9m4e2mr0ui3e8a215n4g")
+    }
+
     func testXIDErrors() {
         // Test with date that exceeds UInt32.max
         let farFutureDate = Date(timeIntervalSince1970: TimeInterval(UInt32.max) + 1)

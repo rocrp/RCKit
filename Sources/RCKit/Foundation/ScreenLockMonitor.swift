@@ -6,46 +6,78 @@
     @Observable
     public final class ScreenLockMonitor {
         public private(set) var isLocked = false
-        public var onLockStateChange: ((Bool) -> Void)?
 
-        @ObservationIgnored nonisolated(unsafe) private var lockObserver: Any?
-        @ObservationIgnored nonisolated(unsafe) private var unlockObserver: Any?
+        @ObservationIgnored private let notificationSource: NotificationSource
+        @ObservationIgnored private var lockObserver: (any NSObjectProtocol)?
+        @ObservationIgnored private var unlockObserver: (any NSObjectProtocol)?
 
-        public init() {
-            let center = DistributedNotificationCenter.default()
-            lockObserver = center.addObserver(
-                forName: .init("com.apple.screenIsLocked"),
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
+        public convenience init() {
+            self.init(notificationSource: NotificationSource(DistributedNotificationCenter.default()))
+        }
+
+        public convenience init(notificationCenter: NotificationCenter) {
+            self.init(notificationSource: NotificationSource(notificationCenter))
+        }
+
+        private init(notificationSource: NotificationSource) {
+            self.notificationSource = notificationSource
+            lockObserver = notificationSource.addObserver(name: .init("com.apple.screenIsLocked")) { [weak self] in
                 Task { @MainActor [weak self] in
-                    self?.setLockState(true)
+                    self?.isLocked = true
                 }
             }
-            unlockObserver = center.addObserver(
-                forName: .init("com.apple.screenIsUnlocked"),
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
+            unlockObserver = notificationSource.addObserver(name: .init("com.apple.screenIsUnlocked")) { [weak self] in
                 Task { @MainActor [weak self] in
-                    self?.setLockState(false)
+                    self?.isLocked = false
                 }
             }
         }
 
-        private func setLockState(_ isLocked: Bool) {
-            self.isLocked = isLocked
-            onLockStateChange?(isLocked)
-        }
-
-        deinit {
-            let center = DistributedNotificationCenter.default()
+        isolated deinit {
             if let lockObserver {
-                center.removeObserver(lockObserver)
+                notificationSource.removeObserver(lockObserver)
             }
             if let unlockObserver {
-                center.removeObserver(unlockObserver)
+                notificationSource.removeObserver(unlockObserver)
             }
+        }
+    }
+
+    private struct NotificationSource: @unchecked Sendable {
+        private let add: @Sendable (Notification.Name, @escaping @Sendable () -> Void) -> any NSObjectProtocol
+        private let remove: @Sendable (any NSObjectProtocol) -> Void
+
+        init(_ center: NotificationCenter) {
+            add = { name, handler in
+                center.addObserver(forName: name, object: nil, queue: .main) { _ in
+                    handler()
+                }
+            }
+            remove = { observer in
+                center.removeObserver(observer)
+            }
+        }
+
+        init(_ center: DistributedNotificationCenter) {
+            add = { name, handler in
+                center.addObserver(forName: name, object: nil, queue: .main) { _ in
+                    handler()
+                }
+            }
+            remove = { observer in
+                center.removeObserver(observer)
+            }
+        }
+
+        func addObserver(
+            name: Notification.Name,
+            handler: @escaping @Sendable () -> Void
+        ) -> any NSObjectProtocol {
+            add(name, handler)
+        }
+
+        func removeObserver(_ observer: any NSObjectProtocol) {
+            remove(observer)
         }
     }
 #endif

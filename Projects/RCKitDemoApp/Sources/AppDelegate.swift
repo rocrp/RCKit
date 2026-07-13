@@ -34,7 +34,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Configuration
 
     private func configureLogging() {
-        NSLoggerSupport.start()
+        Log.bootstrap([NSLoggerSupport.start()] + DemoLogging.destinations)
         logger.info("NSLogger started")
     }
 

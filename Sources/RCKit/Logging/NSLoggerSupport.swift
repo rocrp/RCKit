@@ -24,7 +24,7 @@
             useSSL: Bool = false,
             useBonjourForBuildUser: Bool = false,
             minimumLevel: LogLevel = .debug,
-        ) {
+        ) -> any LogDestination {
             let logger = LoggerGetDefaultLogger()
             var effectiveOptions = options
             if useSSL {
@@ -38,19 +38,32 @@
             }
             LoggerStart(logger)
 
-            // Auto-add NSLoggerDestination
-            Log.addDestination(NSLoggerDestination(minimumLevel: minimumLevel))
+            return NSLoggerDestination(minimumLevel: minimumLevel)
         }
     }
 #else
+    private struct UnavailableNSLoggerDestination: LogDestination {
+        let minimumLevel: LogLevel
+
+        func send(
+            level: LogLevel,
+            message: String,
+            subsystem: String,
+            category: String,
+            file: String,
+            line: UInt,
+            function: String
+        ) {}
+    }
+
     public enum NSLoggerSupport {
         public static func start(
             options: UInt32 = 0,
             useSSL: Bool = false,
             useBonjourForBuildUser: Bool = false,
             minimumLevel: LogLevel = .debug
-        ) {
-            // No-op when NSLogger is not available
+        ) -> any LogDestination {
+            UnavailableNSLoggerDestination(minimumLevel: minimumLevel)
         }
     }
 #endif

@@ -34,8 +34,6 @@
             line: UInt,
             function: String
         ) {
-            guard level >= minimumLevel else { return }
-
             let logger = LoggerGetDefaultLogger()
             let safeLine = min(line, UInt(Int32.max))
             let lineNumber = Int32(safeLine)

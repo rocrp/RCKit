@@ -10,7 +10,7 @@ import PackageDescription
         // NSLogger is only used by RCKit, so keeping it static lets its ObjC symbols
         // (NSLoggerLibObjC) link correctly into the RCKit framework.
         productTypes: [
-            "RCKit": .framework,
+            "RCKit": .framework
         ]
     )
 #endif

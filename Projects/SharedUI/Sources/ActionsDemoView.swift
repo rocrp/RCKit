@@ -16,7 +16,9 @@ public struct ActionsDemoView: View {
                 onRefresh?()
             }
             Button("Log Debug Info") {
-                logger.printDebugInfo()
+                Task {
+                    await logger.printDebugInfo()
+                }
             }
         }
     }

@@ -9,6 +9,66 @@ import Foundation
 import StoreKit
 
 public struct BuildConfig {
+    public enum Channel: String, Sendable {
+        case debug
+        case testflight
+        case appstore
+    }
+
+    protocol ChannelProbe: Sendable {
+        func isSandboxReceipt() async -> Bool
+    }
+
+    actor ChannelResolver {
+        private let isDebugBuild: Bool
+        private let probe: any ChannelProbe
+        private var resolution: Task<Channel, Never>?
+
+        init(isDebugBuild: Bool, probe: any ChannelProbe) {
+            self.isDebugBuild = isDebugBuild
+            self.probe = probe
+        }
+
+        func resolve() async -> Channel {
+            if let resolution {
+                return await resolution.value
+            }
+
+            let resolution = Task { [isDebugBuild, probe] in
+                guard !isDebugBuild else {
+                    return Channel.debug
+                }
+
+                return BuildConfig.resolveChannel(
+                    isDebugBuild: false,
+                    hasSandboxReceipt: await probe.isSandboxReceipt()
+                )
+            }
+            self.resolution = resolution
+            return await resolution.value
+        }
+    }
+
+    private struct AppTransactionChannelProbe: ChannelProbe {
+        func isSandboxReceipt() async -> Bool {
+            do {
+                switch try await AppTransaction.shared {
+                case .verified(let appTransaction):
+                    return appTransaction.environment == .sandbox
+                case .unverified(_, let error):
+                    preconditionFailure("BuildConfig Channel Probe failed verification: \(error)")
+                }
+            } catch {
+                preconditionFailure("BuildConfig Channel Probe failed: \(error)")
+            }
+        }
+    }
+
+    private static let channelResolver = ChannelResolver(
+        isDebugBuild: allowDebug,
+        probe: AppTransactionChannelProbe()
+    )
+
     // via: https://stackoverflow.com/posts/33177600/revisions
     public static let isDebugging: Bool = {
         var info = kinfo_proc()
@@ -19,35 +79,15 @@ public struct BuildConfig {
         return (info.kp_proc.p_flag & P_TRACED) != 0
     }()
 
-    // Initializer fires a background Task on first access and returns false immediately.
-    // The Task updates this value once AppTransaction resolves.
-    nonisolated(unsafe) private static var _isTestFlight: Bool = {
-        Task {
-            #if !DEBUG
-            if let result = try? await AppTransaction.shared,
-                case .verified(let appTransaction) = result
-            {
-                _isTestFlight = appTransaction.environment == .sandbox
-            }
-            #endif
-        }
-        return false
-    }()
-
-    public static var isDebugOrTestFlight: Bool {
-        #if DEBUG
-            return true
-        #else
-            return _isTestFlight
-        #endif
+    public static func channel() async -> Channel {
+        await channelResolver.resolve()
     }
 
-    public static var channelName: String {
-        #if DEBUG
-            return "debug"
-        #else
-            return isDebugOrTestFlight ? "testflight" : "appstore"
-        #endif
+    static func resolveChannel(isDebugBuild: Bool, hasSandboxReceipt: Bool) -> Channel {
+        if isDebugBuild {
+            return .debug
+        }
+        return hasSandboxReceipt ? .testflight : .appstore
     }
 }
 

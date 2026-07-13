@@ -42,8 +42,10 @@ final class MemoryFootprintTests: XCTestCase {
         XCTAssertEqual(gbValue.formattedMemorySize(unit: .gigabytes), "2.00 GB")
     }
 
-    func testFormattedMemoryUsage() throws {
-        let formatted = try MemoryFootprint.getFormattedMemoryUsage()
-        XCTAssertFalse(formatted.isEmpty, "Formatted memory usage should not be empty")
+    func testAutomaticFormattingUnitBoundaries() {
+        XCTAssertEqual(UInt64(1023).formattedMemorySize, "1023 bytes")
+        XCTAssertEqual(UInt64(1024).formattedMemorySize, "1.0 KB")
+        XCTAssertEqual(UInt64(1024 * 1024).formattedMemorySize, "1.0 MB")
+        XCTAssertEqual(UInt64(1024 * 1024 * 1024).formattedMemorySize, "1.00 GB")
     }
 }

@@ -4,6 +4,10 @@
 
 import Foundation
 
+/// Receives structured records that have already passed `Log`'s level gate.
+///
+/// Destinations must not compare `level` with `minimumLevel` in `send`; `Log` is the sole owner
+/// of that policy.
 public protocol LogDestination: Sendable {
     var minimumLevel: LogLevel { get }
 

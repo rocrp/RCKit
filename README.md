@@ -48,11 +48,10 @@ Streams logs to [NSLogger](https://github.com/fpillet/NSLogger) desktop viewer v
 
 ### Setup
 
-1. Call `NSLoggerSupport.start()` early in app launch (before other destinations):
+1. Start NSLogger and bootstrap its Destination early in app launch:
 ```swift
-#if DEBUG
-NSLoggerSupport.start(minimumLevel: .debug)
-#endif
+let nsLogger = NSLoggerSupport.start(minimumLevel: .debug)
+Log.bootstrap([nsLogger])
 ```
 
 2. Add to Info.plist:
@@ -67,8 +66,8 @@ Logs go to both OSLog and NSLogger simultaneously. Domain format: `subsystem:cat
 
 ### Options
 
-- `NSLoggerSupport.start(useBonjourForBuildUser: true)` — per-user Bonjour service name
-- `NSLoggerSupport.start(useSSL: true)` — SSL connection
+- `NSLoggerSupport.start(useBonjourForBuildUser: true)` — returns a Destination using a per-user Bonjour service name
+- `NSLoggerSupport.start(useSSL: true)` — returns a Destination using SSL
 
 ## Notes
 - Fail-fast: invalid inputs preconditionFailure

@@ -6,8 +6,14 @@ public struct LogDemoView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var exportedURL: URL?
+    @State private var fileContent = ""
+    @State private var memoryEntries: [MemoryDestination.Entry] = []
 
+    private let fileDestination = DemoLogging.fileDestination
+    private let fileDestinationError = DemoLogging.fileDestinationError
+    private let memoryDestination = DemoLogging.memoryDestination
     private let log = Log(category: "demo")
+    private let exporter = LogExporter()
 
     public init() {}
 
@@ -15,15 +21,52 @@ public struct LogDemoView: View {
         Section("Log Actions") {
             Button("Log Debug") {
                 log.debug("This is a debug message")
+                refreshDestinations()
             }
             Button("Log Info") {
                 log.info("This is an info message", metadata: ["source": "demo"])
+                refreshDestinations()
             }
             Button("Log Warning") {
                 log.warning("This is a warning message")
+                refreshDestinations()
             }
             Button("Log Error") {
                 log.error("This is an error message", error: DemoError.sampleError)
+                refreshDestinations()
+            }
+        }
+
+        Section("Memory Destination") {
+            Button("Refresh Destinations", action: refreshDestinations)
+
+            if memoryEntries.isEmpty {
+                Text("No captured records")
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(memoryEntries.indices, id: \.self) { index in
+                    let entry = memoryEntries[index]
+                    Text("[\(entry.level.label)] [\(entry.category)] \(entry.message)")
+                        .font(.caption.monospaced())
+                        .textSelection(.enabled)
+                }
+            }
+        }
+        .onAppear(perform: refreshDestinations)
+
+        Section("File Destination") {
+            if let fileDestinationError {
+                Text(fileDestinationError)
+                    .foregroundStyle(.red)
+                    .font(.caption)
+            } else {
+                Button("Refresh File Log", action: refreshDestinations)
+
+                if !fileContent.isEmpty {
+                    Text(fileContent)
+                        .font(.caption.monospaced())
+                        .textSelection(.enabled)
+                }
             }
         }
 
@@ -75,7 +118,7 @@ public struct LogDemoView: View {
 
         do {
             let since = Date.now.addingTimeInterval(-300)  // last 5 minutes
-            logEntries = try await LogExporter.fetch(since: since)
+            logEntries = try await exporter.fetch(since: since)
         } catch {
             errorMessage = "Failed to fetch: \(error.localizedDescription)"
         }
@@ -90,12 +133,25 @@ public struct LogDemoView: View {
 
         do {
             let since = Date.now.addingTimeInterval(-3600)  // last hour
-            exportedURL = try await LogExporter.exportToFile(since: since)
+            exportedURL = try await exporter.exportToFile(since: since)
         } catch {
             errorMessage = "Failed to export: \(error.localizedDescription)"
         }
 
         isLoading = false
+    }
+
+    private func refreshDestinations() {
+        memoryEntries = memoryDestination.entries
+        guard let fileDestination else { return }
+
+        Task {
+            do {
+                fileContent = try await fileDestination.readAllContent()
+            } catch {
+                errorMessage = "Failed to read file log: \(error.localizedDescription)"
+            }
+        }
     }
 }
 

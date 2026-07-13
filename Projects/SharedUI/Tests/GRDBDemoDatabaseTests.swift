@@ -1,5 +1,6 @@
 import Foundation
 import GRDB
+import RCKit
 import XCTest
 
 @testable import SharedUI
@@ -13,7 +14,7 @@ final class GRDBDemoDatabaseTests: XCTestCase {
         let databaseURL = directory.appendingPathComponent("demo.sqlite")
         let database = try DemoDatabase.makeForTesting(at: databaseURL)
 
-        let utcString = UTCDateFormatter.iso8601String(from: Date(timeIntervalSince1970: 0))
+        let utcString = ISO8601UTC.string(from: Date(timeIntervalSince1970: 0))
         var note = DemoNote(id: nil, title: "Test", createdAtUTC: utcString)
         try database.saveNote(&note)
 

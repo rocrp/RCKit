@@ -5,112 +5,210 @@
 import Foundation
 import OSLog
 
-public struct LogEntry: Sendable {
+public struct LogEntry: Equatable, Sendable {
     public let date: Date
     public let level: LogLevel
     public let subsystem: String
     public let category: String
     public let message: String
+
+    public init(
+        date: Date,
+        level: LogLevel,
+        subsystem: String,
+        category: String,
+        message: String
+    ) {
+        self.date = date
+        self.level = level
+        self.subsystem = subsystem
+        self.category = category
+        self.message = message
+    }
+}
+
+public struct LogStorePredicate: Sendable {
+    private let subsystem: String?
+    private let categories: [String]?
+
+    init(subsystem: String?, categories: [String]?) {
+        self.subsystem = subsystem
+        self.categories = categories
+    }
+
+    public var foundationValue: NSPredicate {
+        var format = "eventType == 'logEvent'"
+        var arguments: [Any] = []
+
+        if let subsystem {
+            format += " && subsystem == %@"
+            arguments.append(subsystem)
+        }
+
+        if let categories, !categories.isEmpty {
+            format += " && category IN %@"
+            arguments.append(categories)
+        }
+
+        return NSPredicate(format: format, argumentArray: arguments)
+    }
+}
+
+/// Historical log records consumed by ``LogExporter``.
+///
+/// Implementations receive a fully assembled predicate. A Log Store only queries and maps records;
+/// filtering and formatting decisions belong to the exporter. Because OSLog has no warning archive
+/// level, warnings written as `.error` are returned as ``LogLevel/error``.
+public protocol LogStore: Sendable {
+    func entries(since: Date, matching predicate: LogStorePredicate) async throws -> [LogEntry]
+}
+
+public enum LogStoreError: Error {
+    case unavailable(underlying: any Error)
+    case unexpectedEntry(String)
+}
+
+/// The system Log Store adapter. It maps `OSLogStore` records into owned ``LogEntry`` values.
+public struct SystemLogStore: LogStore {
+    private static let queue = DispatchQueue(label: "dev.rocry.rckit.system-log-store", qos: .utility)
+
+    public init() {}
+
+    public func entries(since: Date, matching predicate: LogStorePredicate) async throws -> [LogEntry] {
+        try await withCheckedThrowingContinuation { continuation in
+            Self.queue.async {
+                do {
+                    continuation.resume(returning: try Self.loadEntries(since: since, matching: predicate.foundationValue))
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    private static func loadEntries(since: Date, matching predicate: NSPredicate) throws -> [LogEntry] {
+        let store: OSLogStore
+        do {
+            store = try OSLogStore(scope: .currentProcessIdentifier)
+        } catch {
+            throw LogStoreError.unavailable(underlying: error)
+        }
+
+        let position = store.position(date: since)
+        return try store.getEntries(at: position, matching: predicate).map { entry in
+            guard let logEntry = entry as? OSLogEntryLog else {
+                throw LogStoreError.unexpectedEntry(String(describing: type(of: entry)))
+            }
+
+            return LogEntry(
+                date: entry.date,
+                level: LogLevel(from: logEntry.level),
+                subsystem: logEntry.subsystem,
+                category: logEntry.category,
+                message: entry.composedMessage
+            )
+        }
+    }
 }
 
 public struct LogExporter: Sendable {
+    private static let exportQueue = DispatchQueue(label: "dev.rocry.rckit.log-export", qos: .utility)
+
     public enum ExportError: Error {
         case storeUnavailable
         case exportFailed(underlying: any Error)
     }
 
-    /// Fetch log entries from OSLogStore for current process
-    public static func fetch(
+    private let store: any LogStore
+    private let destinationDirectory: URL
+    private let now: @Sendable () -> Date
+
+    public init(
+        store: any LogStore = SystemLogStore(),
+        destinationDirectory: URL = FileManager.default.temporaryDirectory,
+        now: @escaping @Sendable () -> Date = Date.init
+    ) {
+        self.store = store
+        self.destinationDirectory = destinationDirectory
+        self.now = now
+    }
+
+    @concurrent
+    public func fetch(
         since: Date,
         subsystem: String? = nil,
         categories: [String]? = nil,
         levels: [LogLevel]? = nil
     ) async throws -> [LogEntry] {
-        let store: OSLogStore
+        try Task.checkCancellation()
+
+        let entries: [LogEntry]
         do {
-            store = try OSLogStore(scope: .currentProcessIdentifier)
-        } catch {
-            throw ExportError.storeUnavailable
-        }
-
-        let position = store.position(date: since)
-
-        // Build predicate
-        var predicateFormat = "eventType == 'logEvent'"
-        var args: [Any] = []
-
-        if let subsystem {
-            predicateFormat += " && subsystem == %@"
-            args.append(subsystem)
-        }
-
-        if let categories, !categories.isEmpty {
-            predicateFormat += " && category IN %@"
-            args.append(categories)
-        }
-
-        let predicate = NSPredicate(format: predicateFormat, argumentArray: args)
-
-        do {
-            let entries = try store.getEntries(at: position, matching: predicate)
-            var result: [LogEntry] = []
-
-            for entry in entries {
-                try Task.checkCancellation()
-
-                guard let logEntry = entry as? OSLogEntryLog else { continue }
-
-                let level = LogLevel(from: logEntry.level)
-
-                // Filter by level if specified
-                if let levels, !levels.contains(level) {
-                    continue
-                }
-
-                result.append(
-                    LogEntry(
-                        date: entry.date,
-                        level: level,
-                        subsystem: logEntry.subsystem,
-                        category: logEntry.category,
-                        message: entry.composedMessage
-                    )
-                )
-            }
-
-            return result
+            entries = try await store.entries(
+                since: since,
+                matching: Self.predicate(subsystem: subsystem, categories: categories)
+            )
         } catch is CancellationError {
             throw CancellationError()
+        } catch LogStoreError.unavailable {
+            throw ExportError.storeUnavailable
         } catch {
             throw ExportError.exportFailed(underlying: error)
         }
+
+        return try entries.filter { entry in
+            try Task.checkCancellation()
+            return levels?.contains(entry.level) ?? true
+        }
     }
 
-    /// Export logs to a temporary file, returns file URL
-    public static func exportToFile(
+    @concurrent
+    public func exportToFile(
         since: Date,
         subsystem: String? = nil
     ) async throws -> URL {
         let entries = try await fetch(since: since, subsystem: subsystem)
+        let formatter = Self.makeDateFormatter()
+        let content =
+            entries.map { entry in
+                let timestamp = formatter.string(from: entry.date)
+                return "[\(timestamp)] [\(entry.level.label)] [\(entry.subsystem):\(entry.category)] \(entry.message)"
+            }.joined(separator: "\n") + (entries.isEmpty ? "" : "\n")
 
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
+        let filename = "logs-\(formatter.string(from: now())).txt"
+        let url = destinationDirectory.appending(path: filename)
 
-        var content = ""
-        for entry in entries {
-            let timestamp = formatter.string(from: entry.date)
-            content += "[\(timestamp)] [\(entry.level.label)] [\(entry.subsystem):\(entry.category)] \(entry.message)\n"
+        do {
+            try await Self.write(content: content, to: url)
+        } catch {
+            throw ExportError.exportFailed(underlying: error)
         }
-
-        let filename = "logs-\(formatter.string(from: Date())).txt"
-        let url = FileManager.default.temporaryDirectory.appending(path: filename)
-
-        try content.write(to: url, atomically: true, encoding: .utf8)
         return url
     }
-}
 
-// MARK: - LogLevel from OSLogEntryLog.Level
+    static func predicate(subsystem: String?, categories: [String]?) -> LogStorePredicate {
+        LogStorePredicate(subsystem: subsystem, categories: categories)
+    }
+
+    private static func makeDateFormatter() -> ISO8601DateFormatter {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime]
+        return formatter
+    }
+
+    private static func write(content: String, to url: URL) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            exportQueue.async {
+                do {
+                    try content.write(to: url, atomically: true, encoding: .utf8)
+                    continuation.resume()
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+}
 
 extension LogLevel {
     init(from osLogLevel: OSLogEntryLog.Level) {
