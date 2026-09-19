@@ -11,13 +11,13 @@ let package = Package(
         .library(name: "RCKit", targets: ["RCKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/fpillet/NSLogger", branch: "master")
+        .package(url: "https://github.com/rocrp/neologger.git", from: "0.1.0")
     ],
     targets: [
         .target(
             name: "RCKit",
             dependencies: [
-                .product(name: "NSLogger", package: "NSLogger")
+                .product(name: "NeoLogger", package: "neologger")
             ],
             swiftSettings: [
                 .enableExperimentalFeature("ApproachableConcurrency")

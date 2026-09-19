@@ -24,8 +24,8 @@ struct MacApp: App {
     }
 
     private func configureLogging() {
-        Log.bootstrap([NSLoggerSupport.start()] + DemoLogging.destinations)
-        logger.info("NSLogger started")
+        Log.bootstrap([NeoLoggerDestination()] + DemoLogging.destinations)
+        logger.info("NeoLogger started")
     }
 
     private func configureGRDB() {

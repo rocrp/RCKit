@@ -34,8 +34,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Configuration
 
     private func configureLogging() {
-        Log.bootstrap([NSLoggerSupport.start()] + DemoLogging.destinations)
-        logger.info("NSLogger started")
+        Log.bootstrap([NeoLoggerDestination()] + DemoLogging.destinations)
+        logger.info("NeoLogger started")
     }
 
     private func configureGRDB() {
