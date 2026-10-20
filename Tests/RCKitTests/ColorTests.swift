@@ -21,6 +21,13 @@ final class ColorTests: XCTestCase {
         try testColorEqual(Color(hex: "0000FF"), Color(red: 0, green: 0, blue: 1))
     }
 
+    func testIntHexPadsToSixOrEightDigits() {
+        XCTAssertEqual(0x80.hex, "000080")
+        XCTAssertEqual(0xFF0000.hex, "ff0000")
+        XCTAssertEqual(0x0100_0000.hex, "01000000")
+        XCTAssertEqual(0xFFFF_FFFF.hex, "ffffffff")
+    }
+
     func testColorEqual(_ c1: Color, _ c2: Color) throws {
         XCTAssertEqual(c1.hex(), c2.hex())
     }

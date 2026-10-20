@@ -6,6 +6,7 @@ let package = Package(
     platforms: [
         .iOS(.v18),
         .macOS(.v15),
+        .watchOS(.v11),
     ],
     products: [
         .library(name: "RCKit", targets: ["RCKit"])

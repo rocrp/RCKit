@@ -26,13 +26,12 @@ extension String: HexLike {
 extension Int: HexLike {
     public var hex: String {
         precondition(self >= 0, "Hex color value must be non-negative")
-        if self <= 0xFFFFFF {
-            return String(format: "%06x", self)
-        }
-        if self <= 0xFFFF_FFFF {
-            return String(format: "%08x", self)
-        }
-        preconditionFailure("Hex color value out of range: \(self)")
+        // UInt64, not Int: 0xFFFF_FFFF overflows the 32-bit Int of arm64_32 (watchOS).
+        let value = UInt64(self)
+        precondition(value <= 0xFFFF_FFFF, "Hex color value out of range: \(self)")
+        let digits = String(value, radix: 16)
+        let width = value <= 0xFF_FFFF ? 6 : 8
+        return String(repeating: "0", count: width - digits.count) + digits
     }
 }
 
