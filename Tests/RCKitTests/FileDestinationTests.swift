@@ -9,8 +9,8 @@ struct FileDestinationTests {
         let directory = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
 
-        let launchDate = try date("2024-01-02T03:04:05Z")
-        let lineDate = try date("2024-01-02T03:05:06Z")
+        let launchDate = try date("2024-01-02T03:04:05.678Z")
+        let lineDate = try date("2024-01-02T03:05:06.000Z")
         let clock = TestClock(dates: [launchDate, lineDate])
         let destination = try FileDestination(
             directory: directory,
@@ -29,7 +29,7 @@ struct FileDestinationTests {
             function: "start()"
         )
 
-        #expect(destination.fileURL == directory.appending(path: "unit-2024-01-02-030405.log"))
+        #expect(destination.fileURL == directory.appending(path: "unit-2024-01-02-030405-678.log"))
         let content = try await destination.readAllContent()
         #expect(
             content == """
@@ -39,64 +39,137 @@ struct FileDestinationTests {
         )
     }
 
-    @Test func retentionRemovesOldestMatchingSessionsAndKeepsNewest() throws {
+    @Test func existingFilenameStepsForwardOneMillisecond() throws {
         let directory = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
 
-        for name in [
-            "unit-2024-01-05-000000.log",
-            "unit-2024-01-01-000000.log",
-            "unit-2024-01-04-000000.log",
-            "unit-2024-01-02-000000.log",
-            "unit-2024-01-03-000000.log",
-        ] {
-            try name.write(to: directory.appending(path: name), atomically: true, encoding: .utf8)
-        }
-        try "unrelated".write(
-            to: directory.appending(path: "other-2023-01-01-000000.log"),
+        try "old\n".write(
+            to: directory.appending(path: "unit-2024-01-02-030405-250.log"),
             atomically: true,
             encoding: .utf8
         )
 
-        let currentDate = try date("2024-01-06T00:00:00Z")
+        let launchDate = try date("2024-01-02T03:04:05.250Z")
+        let destination = try FileDestination(directory: directory, prefix: "unit", now: { launchDate })
+
+        #expect(destination.fileURL == directory.appending(path: "unit-2024-01-02-030405-251.log"))
+    }
+
+    @Test func startRemovesOldestMatchingFilesUntilTotalFitsCap() throws {
+        let directory = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        // 150 + 100 + 120 + 90 = 460 bytes > 300: dropping 150 leaves 310, dropping 100 more leaves 210.
+        for (name, size) in [
+            ("unit-2024-01-04-000000-000.log", 90),
+            ("unit-2024-01-01-000000-000.log", 150),
+            ("unit-2024-01-03-000000-000.log", 120),
+            ("unit-2024-01-02-000000-000.log", 100),
+        ] {
+            try String(repeating: "x", count: size).write(
+                to: directory.appending(path: name),
+                atomically: true,
+                encoding: .utf8
+            )
+        }
+        try String(repeating: "u", count: 1000).write(
+            to: directory.appending(path: "other-2023-01-01-000000-000.log"),
+            atomically: true,
+            encoding: .utf8
+        )
+
+        let currentDate = try date("2024-01-06T00:00:00.000Z")
         let destination = try FileDestination(
             directory: directory,
             prefix: "unit",
-            maxFileCount: 3,
+            maxTotalBytes: 300,
             now: { currentDate }
         )
 
         #expect(
             try destination.allLogFileURLs().map(\.lastPathComponent) == [
-                "unit-2024-01-04-000000.log",
-                "unit-2024-01-05-000000.log",
-                "unit-2024-01-06-000000.log",
+                "unit-2024-01-03-000000-000.log",
+                "unit-2024-01-04-000000-000.log",
+                "unit-2024-01-06-000000-000.log",
             ]
         )
-        #expect(FileManager.default.fileExists(atPath: directory.appending(path: "other-2023-01-01-000000.log").path()))
+        #expect(FileManager.default.fileExists(atPath: directory.appending(path: "other-2023-01-01-000000-000.log").path()))
     }
 
-    @Test func readAllContentConcatenatesSessionsChronologicallyAndFlushesPendingWrite() async throws {
+    @Test func longLaunchRollsAtQuarterCapAndDropsItsOwnOldestFile() async throws {
+        let directory = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        // Every line below is exactly 100 bytes; cap 400 rolls at 100, so each line after the first
+        // starts a file named by its own timestamp. Starting the sixth file makes 500 bytes: the
+        // launch's first file goes.
+        let lineDates = try (6...11).map { try date("2024-01-02T03:04:\(String(format: "%02d", $0)).000Z") }
+        let clock = TestClock(dates: [try date("2024-01-02T03:04:05.250Z")] + lineDates)
+        let destination = try FileDestination(
+            directory: directory,
+            prefix: "unit",
+            maxTotalBytes: 400,
+            minimumLevel: .debug,
+            now: clock.now
+        )
+
+        for n in 1...6 {
+            destination.send(
+                level: .info,
+                message: "\(n)" + String(repeating: "x", count: 57),
+                subsystem: "s",
+                category: "c",
+                file: "f",
+                line: 1,
+                function: "g"
+            )
+        }
+
+        let content = try await destination.readAllContent()
+        #expect(
+            try destination.allLogFileURLs().map(\.lastPathComponent) == [
+                "unit-2024-01-02-030407-000.log",
+                "unit-2024-01-02-030408-000.log",
+                "unit-2024-01-02-030409-000.log",
+                "unit-2024-01-02-030410-000.log",
+                "unit-2024-01-02-030411-000.log",
+            ]
+        )
+        #expect(destination.fileURL == directory.appending(path: "unit-2024-01-02-030411-000.log"))
+        let xs = String(repeating: "x", count: 57)
+        #expect(
+            content == """
+                [2024-01-02T03:04:07] [INFO] [c] 2\(xs) (f#1 g)
+                [2024-01-02T03:04:08] [INFO] [c] 3\(xs) (f#1 g)
+                [2024-01-02T03:04:09] [INFO] [c] 4\(xs) (f#1 g)
+                [2024-01-02T03:04:10] [INFO] [c] 5\(xs) (f#1 g)
+                [2024-01-02T03:04:11] [INFO] [c] 6\(xs) (f#1 g)
+
+                """
+        )
+    }
+
+    @Test func readAllContentConcatenatesFilesChronologicallyAndFlushesPendingWrite() async throws {
         let directory = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
 
         try "first\n".write(
-            to: directory.appending(path: "unit-2024-01-01-000000.log"),
+            to: directory.appending(path: "unit-2024-01-01-000000-000.log"),
             atomically: true,
             encoding: .utf8
         )
         try "second\n".write(
-            to: directory.appending(path: "unit-2024-01-02-000000.log"),
+            to: directory.appending(path: "unit-2024-01-02-000000-000.log"),
             atomically: true,
             encoding: .utf8
         )
         try "ignored\n".write(
-            to: directory.appending(path: "unit-2024-01-00-000000.txt"),
+            to: directory.appending(path: "unit-2024-01-00-000000-000.txt"),
             atomically: true,
             encoding: .utf8
         )
 
-        let fixedDate = try date("2024-01-03T00:00:00Z")
+        let fixedDate = try date("2024-01-03T00:00:00.000Z")
         let destination = try FileDestination(
             directory: directory,
             prefix: "unit",
@@ -123,13 +196,25 @@ struct FileDestinationTests {
         )
     }
 
-    @Test func initThrowsClearErrorWhenLogFileCannotBeOpened() throws {
+    @Test func initRejectsNonPositiveCap() throws {
         let directory = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
 
-        let fixedDate = try date("2024-01-02T03:04:05Z")
-        let fileURL = directory.appending(path: "unit-2024-01-02-030405.log")
-        try FileManager.default.createDirectory(at: fileURL, withIntermediateDirectories: true)
+        #expect(throws: FileDestinationError.self) {
+            try FileDestination(directory: directory, maxTotalBytes: 0)
+        }
+    }
+
+    @Test func initThrowsClearErrorWhenLogFileCannotBeCreated() throws {
+        let directory = try temporaryDirectory()
+        try FileManager.default.setAttributes([.posixPermissions: 0o555], ofItemAtPath: directory.path())
+        defer {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directory.path())
+            try? FileManager.default.removeItem(at: directory)
+        }
+
+        let fixedDate = try date("2024-01-02T03:04:05.000Z")
+        let fileURL = directory.appending(path: "unit-2024-01-02-030405-000.log")
 
         do {
             _ = try FileDestination(
@@ -139,7 +224,7 @@ struct FileDestinationTests {
             )
             Issue.record("Expected FileDestination initialization to fail")
         } catch let error as FileDestinationError {
-            guard case .openFileFailed(let failedURL, _) = error else {
+            guard case .createFileFailed(let failedURL) = error else {
                 Issue.record("Unexpected FileDestination error: \(error)")
                 return
             }
@@ -173,5 +258,6 @@ private func temporaryDirectory() throws -> URL {
 
 private func date(_ value: String) throws -> Date {
     let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
     return try #require(formatter.date(from: value))
 }
