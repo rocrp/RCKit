@@ -93,7 +93,7 @@ struct FileDestinationTests {
                 "unit-2024-01-06-000000-000.log",
             ]
         )
-        #expect(FileManager.default.fileExists(atPath: directory.appending(path: "other-2023-01-01-000000-000.log").path()))
+        #expect(FileManager.default.fileExists(atPath: directory.appending(path: "other-2023-01-01-000000-000.log").path(percentEncoded: false)))
     }
 
     @Test func longLaunchRollsAtQuarterCapAndDropsItsOwnOldestFile() async throws {
@@ -207,9 +207,9 @@ struct FileDestinationTests {
 
     @Test func initThrowsClearErrorWhenLogFileCannotBeCreated() throws {
         let directory = try temporaryDirectory()
-        try FileManager.default.setAttributes([.posixPermissions: 0o555], ofItemAtPath: directory.path())
+        try FileManager.default.setAttributes([.posixPermissions: 0o555], ofItemAtPath: directory.path(percentEncoded: false))
         defer {
-            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directory.path())
+            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directory.path(percentEncoded: false))
             try? FileManager.default.removeItem(at: directory)
         }
 
@@ -229,8 +229,30 @@ struct FileDestinationTests {
                 return
             }
             #expect(failedURL == fileURL)
-            #expect(error.localizedDescription.contains(fileURL.path()))
+            #expect(error.localizedDescription.contains(fileURL.path(percentEncoded: false)))
         }
+    }
+
+    /// iOS's Application Support has a space in its name; `URL.path()` percent-encodes it,
+    /// and a FileManager call given `Application%20Support` created no file (seen on the
+    /// simulator: "could not create log file at …/Application%20Support/Logs/…").
+    @Test func aDirectoryWithASpaceInItsPathTakesLines() async throws {
+        let parent = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: parent) }
+        let directory = parent.appending(path: "Application Support/Logs", directoryHint: .isDirectory)
+
+        let destination = try FileDestination(directory: directory, prefix: "unit", now: { Date(timeIntervalSince1970: 0) })
+        destination.send(
+            level: .notice,
+            message: "ready",
+            subsystem: "com.example.app",
+            category: "app",
+            file: "App.swift",
+            line: 1,
+            function: "f()"
+        )
+
+        #expect(try await destination.readAllContent() == "[1970-01-01T00:00:00] [NOTICE] [app] ready (App.swift#1 f())\n")
     }
 }
 

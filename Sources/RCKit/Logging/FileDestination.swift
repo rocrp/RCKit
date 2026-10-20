@@ -19,19 +19,19 @@ public enum FileDestinationError: LocalizedError {
         case .invalidMaxTotalBytes(let bytes):
             "FileDestination maxTotalBytes must be greater than zero; received \(bytes)"
         case .createDirectoryFailed(let url, let error):
-            "FileDestination could not create log directory at \(url.path()): \(error.localizedDescription)"
+            "FileDestination could not create log directory at \(url.path(percentEncoded: false)): \(error.localizedDescription)"
         case .createFileFailed(let url):
-            "FileDestination could not create log file at \(url.path())"
+            "FileDestination could not create log file at \(url.path(percentEncoded: false))"
         case .openFileFailed(let url, let error):
-            "FileDestination could not open log file at \(url.path()): \(error.localizedDescription)"
+            "FileDestination could not open log file at \(url.path(percentEncoded: false)): \(error.localizedDescription)"
         case .listFilesFailed(let url, let error):
-            "FileDestination could not list log files in \(url.path()): \(error.localizedDescription)"
+            "FileDestination could not list log files in \(url.path(percentEncoded: false)): \(error.localizedDescription)"
         case .cleanupFailed(let url, let error):
-            "FileDestination could not remove old log file at \(url.path()): \(error.localizedDescription)"
+            "FileDestination could not remove old log file at \(url.path(percentEncoded: false)): \(error.localizedDescription)"
         case .writeFailed(let url, let error):
-            "FileDestination could not write log file at \(url.path()): \(error.localizedDescription)"
+            "FileDestination could not write log file at \(url.path(percentEncoded: false)): \(error.localizedDescription)"
         case .synchronizeFailed(let url, let error):
-            "FileDestination could not synchronize log file at \(url.path()): \(error.localizedDescription)"
+            "FileDestination could not synchronize log file at \(url.path(percentEncoded: false)): \(error.localizedDescription)"
         }
     }
 }
@@ -194,12 +194,12 @@ public final class FileDestination: LogDestination, @unchecked Sendable {
     ) throws -> (URL, FileHandle) {
         var milliseconds = Int64((date.timeIntervalSince1970 * 1000).rounded(.down))
         var fileURL = directory.appending(path: filename(prefix: prefix, milliseconds: milliseconds))
-        while FileManager.default.fileExists(atPath: fileURL.path()) {
+        while FileManager.default.fileExists(atPath: fileURL.path(percentEncoded: false)) {
             milliseconds += 1
             fileURL = directory.appending(path: filename(prefix: prefix, milliseconds: milliseconds))
         }
 
-        guard FileManager.default.createFile(atPath: fileURL.path(), contents: nil) else {
+        guard FileManager.default.createFile(atPath: fileURL.path(percentEncoded: false), contents: nil) else {
             throw FileDestinationError.createFileFailed(fileURL)
         }
 
@@ -249,7 +249,7 @@ public final class FileDestination: LogDestination, @unchecked Sendable {
         let files = try matchingLogFiles(in: directory, prefix: prefix)
         let sizes = try files.map { url in
             guard let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize else {
-                preconditionFailure("FileDestination could not read size of \(url.path())")
+                preconditionFailure("FileDestination could not read size of \(url.path(percentEncoded: false))")
             }
             return size
         }
