@@ -1,5 +1,5 @@
 {
-  "originHash" : "12813df6e82b64bd95fd44b1319611d5492e7b3a5e9ec22fc5c2755f85bf1f32",
+  "originHash" : "722441bb0c996ebf438b970e8f68e5166c50677f7cf55cdf58f664bb905d43ae",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -11,12 +11,21 @@
       }
     },
     {
-      "identity" : "nslogger",
+      "identity" : "neologger",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/fpillet/NSLogger",
+      "location" : "https://github.com/rocrp/neologger.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "640681c81ed021136aeacf71a4dee1e90940e5b5"
+        "revision" : "f6c0df636cd99e7a99b1e8c11229ad6295732778",
+        "version" : "0.1.0"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "c9c6bb9d275ec0d95c3ad16391f3f045dc623104",
+        "version" : "1.16.2"
       }
     }
   ],

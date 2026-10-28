@@ -71,3 +71,22 @@ Logs go to both OSLog and NSLogger simultaneously. Domain format: `subsystem:cat
 
 ## Notes
 - Fail-fast: invalid inputs preconditionFailure
+
+## Haptics
+
+Main-actor calls, usable from UIKit or SwiftUI:
+
+```swift
+Haptics.selection()
+Haptics.impact(.light) // medium, heavy, soft, rigid
+Haptics.success()
+Haptics.warning()
+Haptics.error()
+```
+
+Uses iOS system patterns; other platforms deliberately play nothing. `soft` and
+`rigid` describe texture, not additional strength levels. No settings, timers or
+global state: the caller decides whether to play. Keep feedback brief and tied to
+visible interactions; avoid repeating it for streamed text, retries of a transport,
+historical data or background updates. Outcomes describe actions, not ordinary
+message arrival. The Demo's Haptics page lets you compare every pattern on iPhone.

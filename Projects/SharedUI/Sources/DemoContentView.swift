@@ -33,6 +33,8 @@ public struct DemoContentView: View {
             MMKVDemoView()
         case .actions:
             ActionsDemoView()
+        case .haptics:
+            HapticsDemoView()
         }
     }
 }

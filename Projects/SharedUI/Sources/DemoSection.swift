@@ -8,6 +8,7 @@ public enum DemoSection: String, CaseIterable, Identifiable, Sendable {
     case grdb
     case mmkv
     case actions
+    case haptics
 
     public var id: String { rawValue }
 
@@ -20,6 +21,7 @@ public enum DemoSection: String, CaseIterable, Identifiable, Sendable {
         case .grdb: "GRDB"
         case .mmkv: "MMKV"
         case .actions: "Actions"
+        case .haptics: "Haptics"
         }
     }
 
@@ -32,6 +34,7 @@ public enum DemoSection: String, CaseIterable, Identifiable, Sendable {
         case .grdb: "cylinder"
         case .mmkv: "externaldrive"
         case .actions: "bolt"
+        case .haptics: "hand.tap"
         }
     }
 }
